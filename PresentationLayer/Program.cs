@@ -1,3 +1,4 @@
+using PresentationLayer.ViewLoaders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,11 @@ namespace PresentationLayer
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            ViewLoader loader = new ViewLoader();
+            loader.LoadMainView();
+
+            Application.Run(loader.LastLoadedForm);
         }
     }
 }
