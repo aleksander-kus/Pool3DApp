@@ -38,7 +38,7 @@ namespace PresentationLayer.Views
             this.canvasBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.canvasBox.Location = new System.Drawing.Point(0, 0);
             this.canvasBox.Name = "canvasBox";
-            this.canvasBox.Size = new System.Drawing.Size(1245, 772);
+            this.canvasBox.Size = new System.Drawing.Size(1154, 874);
             this.canvasBox.TabIndex = 0;
             this.canvasBox.TabStop = false;
             // 
@@ -46,10 +46,11 @@ namespace PresentationLayer.Views
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1245, 772);
+            this.ClientSize = new System.Drawing.Size(1154, 874);
             this.Controls.Add(this.canvasBox);
             this.Name = "MainView";
             this.Text = "MainView";
+            this.Load += new System.EventHandler(this.MainView_Load);
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).EndInit();
             this.ResumeLayout(false);
 
