@@ -13,12 +13,10 @@ namespace PresentationLayer.Views
             InitializeComponent();
             timer.Tick += Timer_Tick;
             timer.Interval = 30;
+
         }
 
-        private void Timer_Tick(object sender, System.EventArgs e)
-        {
-            presenter.Rotate();
-        }
+        private void Timer_Tick(object sender, System.EventArgs e) => presenter.Rotate();
 
         public MainPresenter Presenter { set => presenter = value; }
 
@@ -32,7 +30,20 @@ namespace PresentationLayer.Views
 
         private void MainView_Load(object sender, System.EventArgs e)
         {
+            presenter.Fov = fovBar.Value;
+            fovLabel.Text = $"Fov: {fovBar.Value}";
             timer.Start();
+        }
+
+        private void MainView_Resize(object sender, System.EventArgs e)
+        {
+            presenter.LoadCanvasDimensions();
+        }
+
+        private void fovBar_ValueChanged(object sender, System.EventArgs e)
+        {
+            presenter.Fov = fovBar.Value;
+            fovLabel.Text = $"Fov: {fovBar.Value}";
         }
     }
 }

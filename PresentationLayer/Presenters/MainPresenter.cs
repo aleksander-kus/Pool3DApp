@@ -20,14 +20,21 @@ namespace PresentationLayer.Presenters
         private readonly MatrixService matrixService;
         private const int n = 1;
         private const double f = 100;
-        double fov = Math.PI / 180 * 45; // kat patrzenia w stopniach
+        private double fov = Math.PI / 180 * 45; // kat patrzenia w stopniach
+        public int Fov
+        {
+            set
+            {
+                fov = Math.PI / 180 * value;
+            }
+        }
 
-        double e;
-        double a = 1; // aspect ratio picture boxa (H / W)
-        double[,] ModelMatrix;
-        double[,] ViewMatrix;
-        double[,] ProjectionMatrix;
-        double[][] Points;
+        private double e;
+        private double a = 1; // aspect ratio picture boxa (H / W)
+        private double[,] ModelMatrix;
+        private double[,] ViewMatrix;
+        private double[,] ProjectionMatrix;
+        private double[][] Points;
         List<List<int>> connections;
         public MainPresenter(IMainView view, IViewLoader viewLoader)
         {
@@ -88,17 +95,29 @@ namespace PresentationLayer.Presenters
             }
         }
         private int alpha = 0;
-        public void Rotate()
+        public void Rotate(int degree = 5)
         {
             double rad = Math.PI * alpha / 180;
+            e = 1 / Math.Tan(fov / 2);
+            a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
             double[,] mm = { { Math.Cos(rad), -Math.Sin(rad), 0, 0 }, { Math.Sin(rad), Math.Cos(rad), 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
+            double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
             ModelMatrix = mm;
+            ProjectionMatrix = pm;
             var hehe = Points.ToList()
                 .Select(point => ConvertToCanvas(ProjectPoint(point)))
                 .ToArray();
             DrawPoints(hehe);
             view.RedrawCanvas();
-            alpha += 5;
+            alpha += degree;
+        }
+
+        public void LoadCanvasDimensions()
+        {
+            bitmap = new(view.CanvasWidth, view.CanvasHeight);
+            view.CanvasImage = bitmap;
+            Rotate(0);
+
         }
     }
 }
