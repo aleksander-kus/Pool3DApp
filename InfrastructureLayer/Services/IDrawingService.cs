@@ -7,7 +7,6 @@ namespace InfrastructureLayer.Services
 {
     public interface IDrawingService
     {
-        void DrawLineBresenham(IFastBitmap bitmap, Color color, Point p1, Point p2);
-        void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer);
+        void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer, int seed);
     }
 }

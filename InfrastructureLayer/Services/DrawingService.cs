@@ -9,14 +9,20 @@ namespace InfrastructureLayer.Services
 {
     public class DrawingService : IDrawingService
     {
-        public void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer)
+        public void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer, int seed)
         {
-            Random random = new Random(1234);
-            foreach (var triangle in triangels)
+            Random random = new Random(seed);
+            for(int i = 0; i < triangels.Count; i += 2)
             {
                 Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
-                ScanLineColoring(bitmap, triangle, color, zbuffer);
+                ScanLineColoring(bitmap, triangels[i], color, zbuffer);
+                ScanLineColoring(bitmap, triangels[i+ 1], color, zbuffer);
             }
+            //foreach (var triangle in triangels)
+            //{
+            //    Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
+            //    ScanLineColoring(bitmap, triangle, color, zbuffer);
+            //}
         }
         private void ScanLineColoring(IFastBitmap bitmap, List<Vector3> shape, Color color, double[,] zbuffer)
         {
@@ -25,9 +31,6 @@ namespace InfrastructureLayer.Services
             int ymin = (int)P[0].Y;
             int ymax = (int)P[^1].Y;
             int current_index = 0;
-            //Vector3 color1 = colorService.ComputeColor(shape[0], parameters).From255();
-            //Vector3 color2 = colorService.ComputeColor(shape[1], parameters).From255();
-            //Vector3 color3 = colorService.ComputeColor(shape[2], parameters).From255();
             for (int y = ymin; y <= ymax; ++y)
             {
                 // For each point that was on the previous line
@@ -66,15 +69,6 @@ namespace InfrastructureLayer.Services
                 {
                     for (int x = (int)Math.Round(AET[i].x); x < AET[i + 1].x; ++x)
                     {
-                        //Color color = Color.Black;
-                        //float z = GetZ(x, y, shape[0], shape[1], shape[2]);
-                        //if (parameters.FillMode == FillMode.Interpolation)
-                        //{
-                        //    var factors = GetInterpolationFactors(shape, new Vector3(x, y, z), parameters);
-                        //    color = (color1 * factors.X + color2 * factors.Y + color3 * factors.Z).To255();
-                        //}
-                        //else
-                        //    color = colorService.ComputeColor(new Vector3(x, y, z), parameters);
                         if (x < 0 || x >= bitmap.Width || y < 0 || y >= bitmap.Height)
                             continue;
                         double z = GetZ(x, y, shape[0], shape[1], shape[2]);
@@ -103,61 +97,6 @@ namespace InfrastructureLayer.Services
             float z2 = (x - p1.X) * (y - p2.Y) + (x - p2.X) * (y - p3.Y) + (x - p3.X) * (y - p1.Y) - (x - p1.X) * (y - p3.Y) - (x - p2.X) * (y - p1.Y) - (x - p3.X) * (y - p2.Y);
 
             return z1 / z2;
-        }
-
-        public void DrawLineBresenham(IFastBitmap bitmap, Color color, Point p1, Point p2)
-        {
-            int dx = Math.Abs(p2.X - p1.X), dy = Math.Abs(p2.Y - p1.Y);
-            int x_increment = (p1.X < p2.X) ? 1 : p1.X == p2.X ? 0 : -1;
-            int y_increment = (p1.Y < p2.Y) ? 1 : p1.Y == p2.Y ? 0 : -1;
-            // first pixel
-            int x = p1.X, y = p1.Y;
-            bitmap.SetPixel(x, y, color);
-            // go along X-axis
-            if (dx > dy)
-            {
-                int d = 2 * dy - dx;
-                int across_increment = (dy - dx) * 2;
-                int same_line_increment = 2 * dy;
-                // pętla po kolejnych x
-                while (x != p2.X)
-                {
-                    if (d < 0)  // remain in the same line
-                    {
-                        d += same_line_increment;
-                        x += x_increment;
-                    }
-                    else  // go across
-                    {
-                        d += across_increment;
-                        x += x_increment;
-                        y += y_increment;
-                    }
-                    bitmap.SetPixel(x, y, color);
-                }
-            }
-            // go along Y-axis
-            else
-            {
-                int d = 2 * dx - dy;
-                int across_increment = (dx - dy) * 2;
-                int same_line_increment = 2 * dx;
-                while (y != p2.Y)
-                {
-                    if (d < 0)  // remain in the same line
-                    {
-                        d += same_line_increment;
-                        y += y_increment;
-                    }
-                    else  // go across
-                    {
-                        d += across_increment;
-                        x += x_increment;
-                        y += y_increment;
-                    }
-                    bitmap.SetPixel(x, y, color);
-                }
-            }
         }
     }
 }

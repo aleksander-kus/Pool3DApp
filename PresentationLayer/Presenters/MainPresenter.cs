@@ -95,7 +95,6 @@ namespace PresentationLayer.Presenters
         private void DrawPoints(Vector3[] points)
         {
             Graphics g = Graphics.FromImage(bitmap);
-            g.Clear(Color.White);
             for(int i = 0; i < points.Length; ++i)
             {
                 g.FillRectangle(Brushes.Black, points[i].X, points[i].Y, 2, 2);
@@ -107,7 +106,6 @@ namespace PresentationLayer.Presenters
         private void DrawTriangles(List<List<Vector3>> triangles)
         {
             Graphics g = Graphics.FromImage(bitmap);
-            g.Clear(Color.White);
             foreach(var triangle in triangles)
             {
                 g.DrawPolygon(Pens.Black, triangle.Select(point => new Point((int)point.X, (int)point.Y)).ToArray());
@@ -132,16 +130,13 @@ namespace PresentationLayer.Presenters
                 triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 1, 0, 1 }, new double[] { i, 1, 1, 1 } });
                 triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 0, 1, 1 }, new double[] { i, 1, 1, 1 } });
             }
-            //for (int x = 0; x <= 1; ++x)
-            //    for(int y = 0; y <= 1; ++y)
-            //        for(int z = 0; z <= 1; z++)
-            //            if(x == y && x != z|| x == z && x != y || y == z && y != x)
-            //                triangles.Add(new List<int> { x, y, z });
         }
 
         private int alpha = 0;
         public void Rotate(int degree = 5)
         {
+            using Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(Color.White);
             double rad = Math.PI * alpha / 180;
             e = 1 / Math.Tan(fov / 2);
             a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
@@ -155,16 +150,9 @@ namespace PresentationLayer.Presenters
             for (int i = 0; i < zbuffer.GetLength(0); i++)
                 for (int j = 0; j < zbuffer.GetLength(1); j++)
                     zbuffer[i, j] = double.PositiveInfinity;
-            //var projected = Points.ToList()
-            //    .Select(point => ConvertToCanvas(ProjectPoint(point)))
-            //    .ToArray();
-            //DrawPoints(projected);
             DrawTriangles(projected_triangles);
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
-            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer);
-            for (int i = 0; i < zbuffer.GetLength(0); i++)
-                for (int j = 0; j < zbuffer.GetLength(1); j++)
-                    zbuffer[i, j] = double.PositiveInfinity;
+            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 2000);
             rad *= 2;
             double[,] mm2 = { { 1, 0, 0, 0 }, { 0, Math.Cos(rad), -Math.Sin(rad), 0 }, { 0, Math.Sin(rad), Math.Cos(rad), 0 }, { 0, 0, 0, 1 } };
 
@@ -172,7 +160,7 @@ namespace PresentationLayer.Presenters
 
             projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
             DrawTriangles(projected_triangles);
-            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer);
+            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 4321);
 
             view.CanvasImage = bitmap = fastBitmap.Bitmap;
             view.RedrawCanvas();
