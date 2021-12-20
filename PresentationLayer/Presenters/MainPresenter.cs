@@ -8,6 +8,7 @@ using System.Drawing.Drawing2D;
 using System.Numerics;
 using System.Linq;
 using System.Collections.Generic;
+using DomainLayer;
 
 namespace PresentationLayer.Presenters
 {
@@ -20,7 +21,7 @@ namespace PresentationLayer.Presenters
         private readonly MatrixService matrixService;
         private const int n = 1;
         private const double f = 100;
-        private double fov = Math.PI / 180 * 45; // kat patrzenia w stopniach
+        private double fov = Math.PI / 180 * 100; // kat patrzenia w stopniach
         public int Fov
         {
             set
@@ -35,7 +36,8 @@ namespace PresentationLayer.Presenters
         private double[,] ViewMatrix;
         private double[,] ProjectionMatrix;
         private double[][] Points;
-        List<List<int>> connections;
+        private List<List<int>> connections;
+        private List<List<double[]>> triangles = new();
         public MainPresenter(IMainView view, IViewLoader viewLoader)
         {
             this.view = view;
@@ -60,11 +62,17 @@ namespace PresentationLayer.Presenters
             {
                 List<int> connected = new();
                 for (int i = 0; i < points.Length; ++i)
-                    if (points[i][0] == point[0] && points[i][1] == point[1] && points[i][2] != point[2] || points[i][1] == point[1] && points[i][2] == point[2] && points[i][0] != point[0] || points[i][0] == point[0] && points[i][2] == point[2] && points[i][1] != point[1])
+                    //if (points[i][0] == point[0] && points[i][1] == point[1] && points[i][2] != point[2] || 
+                    //    points[i][1] == point[1] && points[i][2] == point[2] && points[i][0] != point[0] || 
+                    //    points[i][0] == point[0] && points[i][2] == point[2] && points[i][1] != point[1])
+                    if (points[i][0] == point[0] ||
+                        points[i][1] == point[1] ||
+                        points[i][2] == point[2])
                         connected.Add(i);
                 connectedWith.Add(connected);
             }
             connections = connectedWith;
+            ExtractTriangles();
             Rotate();
             this.view.CanvasImage = bitmap;
             this.view.RedrawCanvas();
@@ -76,14 +84,15 @@ namespace PresentationLayer.Presenters
             return pointPrim.Select(coord => coord / pointPrim[3]).ToArray();
         }
 
-        private Point ConvertToCanvas(double[] point)
+        private Vector3 ConvertToCanvas(double[] point)
         {
             int x = (int)Math.Round(view.CanvasWidth / 2 * (point[0] + 1));
             int y = (int)Math.Round(view.CanvasHeight / 2 * (point[1] + 1));
-            return new Point(x, y);
+            float z = (float)point[2];
+            return new Vector3(x, y, z);
         }
 
-        private void DrawPoints(Point[] points)
+        private void DrawPoints(Vector3[] points)
         {
             Graphics g = Graphics.FromImage(bitmap);
             g.Clear(Color.White);
@@ -91,9 +100,45 @@ namespace PresentationLayer.Presenters
             {
                 g.FillRectangle(Brushes.Black, points[i].X, points[i].Y, 2, 2);
                 for(int j = 0; j < connections[i].Count; ++j)
-                    g.DrawLine(Pens.Black, points[i], points[connections[i][j]]);
+                    g.DrawLine(Pens.Black, new Point((int)points[i].X, (int)points[i].Y), new Point((int)points[connections[i][j]].X, (int)points[connections[i][j]].Y));
             }
         }
+
+        private void DrawTriangles(List<List<Vector3>> triangles)
+        {
+            Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(Color.White);
+            foreach(var triangle in triangles)
+            {
+                g.DrawPolygon(Pens.Black, triangle.Select(point => new Point((int)point.X, (int)point.Y)).ToArray());
+            }
+
+        }
+        private void ExtractTriangles()
+        {
+            triangles.Clear();
+            for(int i = 0;i <= 1; ++i)
+            {
+                triangles.Add(new List<double[]> { new double[] { 0, 0, i, 1 }, new double[] { 0, 1, i, 1 }, new double[] { 1, 1, i, 1 } });
+                triangles.Add(new List<double[]> { new double[] { 0, 0, i, 1 }, new double[] { 1, 0, i, 1 }, new double[] { 1, 1, i, 1 } });
+            }
+            for (int i = 0; i <= 1; ++i)
+            {
+                triangles.Add(new List<double[]> { new double[] { 0, i, 0, 1 }, new double[] { 0, i, 1, 1 }, new double[] { 1, i, 1, 1 } });
+                triangles.Add(new List<double[]> { new double[] { 0, i, 0, 1 }, new double[] { 1, i, 0, 1 }, new double[] { 1, i, 1, 1 } });
+            }
+            for (int i = 0; i <= 1; ++i)
+            {
+                triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 1, 0, 1 }, new double[] { i, 1, 1, 1 } });
+                triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 0, 1, 1 }, new double[] { i, 1, 1, 1 } });
+            }
+            //for (int x = 0; x <= 1; ++x)
+            //    for(int y = 0; y <= 1; ++y)
+            //        for(int z = 0; z <= 1; z++)
+            //            if(x == y && x != z|| x == z && x != y || y == z && y != x)
+            //                triangles.Add(new List<int> { x, y, z });
+        }
+
         private int alpha = 0;
         public void Rotate(int degree = 5)
         {
@@ -104,10 +149,32 @@ namespace PresentationLayer.Presenters
             double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
             ModelMatrix = mm;
             ProjectionMatrix = pm;
-            var hehe = Points.ToList()
-                .Select(point => ConvertToCanvas(ProjectPoint(point)))
-                .ToArray();
-            DrawPoints(hehe);
+            var projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
+            ModelMatrix = mm;
+            double[,] zbuffer = new double[view.CanvasWidth, view.CanvasHeight];
+            for (int i = 0; i < zbuffer.GetLength(0); i++)
+                for (int j = 0; j < zbuffer.GetLength(1); j++)
+                    zbuffer[i, j] = double.PositiveInfinity;
+            //var projected = Points.ToList()
+            //    .Select(point => ConvertToCanvas(ProjectPoint(point)))
+            //    .ToArray();
+            //DrawPoints(projected);
+            DrawTriangles(projected_triangles);
+            IFastBitmap fastBitmap = new ByteBitmap(bitmap);
+            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer);
+            for (int i = 0; i < zbuffer.GetLength(0); i++)
+                for (int j = 0; j < zbuffer.GetLength(1); j++)
+                    zbuffer[i, j] = double.PositiveInfinity;
+            rad *= 2;
+            double[,] mm2 = { { 1, 0, 0, 0 }, { 0, Math.Cos(rad), -Math.Sin(rad), 0 }, { 0, Math.Sin(rad), Math.Cos(rad), 0 }, { 0, 0, 0, 1 } };
+
+            ModelMatrix = mm2;
+
+            projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
+            DrawTriangles(projected_triangles);
+            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer);
+
+            view.CanvasImage = bitmap = fastBitmap.Bitmap;
             view.RedrawCanvas();
             alpha += degree;
         }

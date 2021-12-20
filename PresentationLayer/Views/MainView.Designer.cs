@@ -33,8 +33,8 @@ namespace PresentationLayer.Views
             this.canvasBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.fovBar = new System.Windows.Forms.TrackBar();
             this.fovLabel = new System.Windows.Forms.Label();
+            this.fovBar = new System.Windows.Forms.TrackBar();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -100,6 +100,15 @@ namespace PresentationLayer.Views
             this.panel1.Size = new System.Drawing.Size(335, 428);
             this.panel1.TabIndex = 0;
             // 
+            // fovLabel
+            // 
+            this.fovLabel.AutoSize = true;
+            this.fovLabel.Location = new System.Drawing.Point(137, 36);
+            this.fovLabel.Name = "fovLabel";
+            this.fovLabel.Size = new System.Drawing.Size(32, 15);
+            this.fovLabel.TabIndex = 1;
+            this.fovLabel.Text = "Fov: ";
+            // 
             // fovBar
             // 
             this.fovBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -113,15 +122,6 @@ namespace PresentationLayer.Views
             this.fovBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.fovBar.Value = 45;
             this.fovBar.ValueChanged += new System.EventHandler(this.fovBar_ValueChanged);
-            // 
-            // fovLabel
-            // 
-            this.fovLabel.AutoSize = true;
-            this.fovLabel.Location = new System.Drawing.Point(137, 36);
-            this.fovLabel.Name = "fovLabel";
-            this.fovLabel.Size = new System.Drawing.Size(32, 15);
-            this.fovLabel.TabIndex = 1;
-            this.fovLabel.Text = "Fov: ";
             // 
             // MainView
             // 

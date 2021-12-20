@@ -12,7 +12,7 @@ namespace PresentationLayer.Views
         {
             InitializeComponent();
             timer.Tick += Timer_Tick;
-            timer.Interval = 30;
+            timer.Interval = 100;
 
         }
 
