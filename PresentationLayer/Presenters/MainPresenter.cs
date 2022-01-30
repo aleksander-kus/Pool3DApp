@@ -19,7 +19,7 @@ namespace PresentationLayer.Presenters
         private readonly IViewLoader viewLoader;
         private readonly IDrawingService drawingService;
         private readonly MatrixService matrixService;
-        private const int n = 1;
+        private const int n = 5;
         private const double f = 100;
         private double fov = Math.PI / 180 * 100; // kat patrzenia w stopniach
         public int Fov
@@ -49,7 +49,7 @@ namespace PresentationLayer.Presenters
             e = 1 / Math.Tan(fov / 2);
             a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
             double[,] mm = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-            double[,] vm = { { 0, 1, 0, -0.5 }, { 0, 0, 1, -0.5 }, { 1, 0, 0, -3 }, { 0, 0, 0, 1 } };
+            double[,] vm = { { 0, 1, 0, -0.5 }, { 0, 0, 1, -0.5 }, { 1, 0, 0, -10 }, { 0, 0, 0, 1 } };
             double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
             ModelMatrix = mm;
             ViewMatrix = vm;
