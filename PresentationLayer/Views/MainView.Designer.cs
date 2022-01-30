@@ -120,7 +120,7 @@ namespace PresentationLayer.Views
             this.fovBar.Size = new System.Drawing.Size(329, 45);
             this.fovBar.TabIndex = 0;
             this.fovBar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.fovBar.Value = 120;
+            this.fovBar.Value = 45;
             this.fovBar.ValueChanged += new System.EventHandler(this.fovBar_ValueChanged);
             // 
             // MainView

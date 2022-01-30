@@ -12,7 +12,7 @@ namespace PresentationLayer.Views
         {
             InitializeComponent();
             timer.Tick += Timer_Tick;
-            timer.Interval = 50;
+            timer.Interval = 1000;
 
         }
 
@@ -32,7 +32,7 @@ namespace PresentationLayer.Views
         {
             presenter.Fov = fovBar.Value;
             fovLabel.Text = $"Fov: {fovBar.Value}";
-            timer.Start();
+            //timer.Start();
         }
 
         private void MainView_Resize(object sender, System.EventArgs e)
