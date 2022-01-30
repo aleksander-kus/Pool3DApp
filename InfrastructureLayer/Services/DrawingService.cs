@@ -9,15 +9,16 @@ namespace InfrastructureLayer.Services
 {
     public class DrawingService : IDrawingService
     {
-        public void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer, int seed)
+        public void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangels, double[,] zbuffer, int seed)
         {
-            Random random = new Random(seed);
-            for(int i = 0; i < triangels.Count; i += 2)
-            {
-                Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
-                ScanLineColoring(bitmap, triangels[i], color, zbuffer);
-                ScanLineColoring(bitmap, triangels[i+ 1], color, zbuffer);
-            }
+            triangels.ForEach(triangle => ScanLineColoring(bitmap, triangle.Points.Select(point => point.Coordinates).ToList(), triangle.Color, zbuffer));
+            //Random random = new Random(seed);
+            //for(int i = 0; i < triangels.Count; i += 2)
+            //{
+            //    Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
+            //    ScanLineColoring(bitmap, triangels[i], color, zbuffer);
+            //    ScanLineColoring(bitmap, triangels[i+ 1], color, zbuffer);
+            //}
             //foreach (var triangle in triangels)
             //{
             //    Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
