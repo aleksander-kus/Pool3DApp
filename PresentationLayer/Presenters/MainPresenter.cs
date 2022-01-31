@@ -28,7 +28,7 @@ namespace PresentationLayer.Presenters
             set
             {
                 fov = Math.PI / 180 * value;
-                Rotate();
+                Update();
             }
         }
         private Matrix4x4 modelMatrix;
@@ -47,40 +47,14 @@ namespace PresentationLayer.Presenters
             drawingService = new DrawingService();
             matrixService = new MatrixService();
             sceneService = new SceneService();
-
-            //e = 1 / Math.Tan(fov / 2);
-            //a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
-            //double[,] mm = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-            //double[,] vm = { { 0, 1, 0, -0.5 }, { 0, 0, 1, -0.5 }, { 1, 0, 0, -10 }, { 0, 0, 0, 1 } };
-            //double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
-            //ModelMatrix = mm;
-            //double[][] points = { new double[]{ 0, 0, 0, 1 }, new double[]{ 1, 0, 0, 1 }, new double[]{ 1, 1, 0, 1 }, new double[]{ 0, 1, 0, 1 },
-            //new double[]{ 0, 0, 1, 1 }, new double[]{ 1, 0, 1, 1 }, new double[]{ 1, 1, 1, 1 }, new double[]{ 0, 1, 1, 1 }};
-            //Points = points;
-            //List<List<int>> connectedWith = new();
-            //foreach(var point in points)
-            //{
-            //    List<int> connected = new();
-            //    for (int i = 0; i < points.Length; ++i)
-            //        //if (points[i][0] == point[0] && points[i][1] == point[1] && points[i][2] != point[2] || 
-            //        //    points[i][1] == point[1] && points[i][2] == point[2] && points[i][0] != point[0] || 
-            //        //    points[i][0] == point[0] && points[i][2] == point[2] && points[i][1] != point[1])
-            //        if (points[i][0] == point[0] ||
-            //            points[i][1] == point[1] ||
-            //            points[i][2] == point[2])
-            //            connected.Add(i);
-            //    connectedWith.Add(connected);
-            //}
-            //connections = connectedWith;
-            //ExtractTriangles();
             (triangles, rectangles) = sceneService.GetScene();
-            (cube.Triangles, cube.Walls) = sceneService.GetCube();
+            (cube.Triangles, cube.Rectangles) = sceneService.GetCube();
             cube.Center = new ModelPoint(0.5f, 1, .1f);
             cameras.Add(new StaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1)));
             cameras.Add(new CubeFollowingCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1), cube));
             cameras.Add(new CubeOnTopCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0, 0, 0), new Vector3(0, 0, 1), cube));
 
-            Rotate();
+            Update();
             this.view.CanvasImage = bitmap;
             this.view.RedrawCanvas();
         }
@@ -122,67 +96,40 @@ namespace PresentationLayer.Presenters
             activeCameraId = (activeCameraId + 1) % cameras.Count;
         }
 
-        //private void DrawPoints(Vector3[] points)
-        //{
-        //    Graphics g = Graphics.FromImage(bitmap);
-        //    for(int i = 0; i < points.Length; ++i)
-        //    {
-        //        g.FillRectangle(Brushes.Black, points[i].X, points[i].Y, 2, 2);
-        //        for(int j = 0; j < connections[i].Count; ++j)
-        //            g.DrawLine(Pens.Black, new Point((int)points[i].X, (int)points[i].Y), new Point((int)points[connections[i][j]].X, (int)points[connections[i][j]].Y));
-        //    }
-        //}
-
-        private int alpha = 0;
-        public void Rotate(int degree = 5)
+        public void Update()
         {
             using Graphics g1 = Graphics.FromImage(bitmap);
             g1.Clear(Color.White);
-            //modelMatrix = Matrix4x4.CreateTranslation(new Vector3(0.5f, 1, 0));
-            //modelMatrix = Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, new Vector3(0.5f, 1, 0));
-            modelMatrix = Matrix4x4.Identity;
-            //viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
-            Camera activeCamera = cameras[activeCameraId];
-            viewMatrix = Matrix4x4.CreateLookAt(activeCamera.Position.Coordinates, activeCamera.Target.Coordinates, activeCamera.UpVector);
-            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
-            var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
             double[,] zbuffer = new double[view.CanvasWidth, view.CanvasHeight];
             for (int i = 0; i < zbuffer.GetLength(0); i++)
                 for (int j = 0; j < zbuffer.GetLength(1); j++)
                     zbuffer[i, j] = double.PositiveInfinity;
-            //DrawTriangles(projected_triangles);
-            var point = ProjectPoint(new ModelPoint(0.5f, 1, 0));
-            var center = ProjectPoint(new ModelPoint(0, 0, 0));
-            var p1 = ProjectPoint(new ModelPoint(0f, 0f, 0.1f));
-            var p2 = ProjectPoint(new ModelPoint(0f, 2f, 0.1f));
-            var p3 = ProjectPoint(new ModelPoint(1f, 2f, 0f));
-            var p4 = ProjectPoint(new ModelPoint(1f, 0f, 0f));
+            Camera activeCamera = cameras[activeCameraId];
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
+
+            modelMatrix = Matrix4x4.Identity;
+            viewMatrix = Matrix4x4.CreateLookAt(activeCamera.Position.Coordinates, activeCamera.Target.Coordinates, activeCamera.UpVector);
+            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
+            var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
+            var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
             drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer);
             drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
 
             modelMatrix = Matrix4x4.CreateTranslation(cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(cube.Rotation * (float)Math.PI / 180, cube.Center.Coordinates);
             var projectedCubeTriangles = cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            var projectedCubeWalls = cube.Walls.Select(wall => ProjectRectangle(wall)).ToList();
+            var projectedCubeWalls = cube.Rectangles.Select(wall => ProjectRectangle(wall)).ToList();
             drawingService.ColorTriangles(fastBitmap, projectedCubeTriangles, zbuffer);
             drawingService.DrawContour(fastBitmap, projectedCubeWalls, Color.Black, zbuffer);
             bitmap = fastBitmap.Bitmap;
-            using Graphics g = Graphics.FromImage(bitmap);
-            //g.FillRectangle(Brushes.Black, point.Coordinates.X, point.Coordinates.Y, 5, 5);
-            //g.FillRectangle(Brushes.Black, center.Coordinates.X, center.Coordinates.Y, 5, 5);
-            //g.DrawPolygon(new Pen(Brushes.Black, 1), new PointF[] { new PointF(p1.Coordinates.X, p1.Coordinates.Y), new PointF(p2.Coordinates.X, p2.Coordinates.Y), new PointF(p3.Coordinates.X, p3.Coordinates.Y), new PointF(p4.Coordinates.X, p4.Coordinates.Y) });
             view.CanvasImage = bitmap;
             view.RedrawCanvas();
-            alpha += degree;
         }
 
         public void LoadCanvasDimensions()
         {
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
             view.CanvasImage = bitmap;
-            Rotate(0);
-
+            Update();
         }
     }
 }

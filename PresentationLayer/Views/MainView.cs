@@ -7,7 +7,7 @@ namespace PresentationLayer.Views
     public partial class MainView : Form, IMainView
     {
         private MainPresenter presenter;
-        private Timer timer = new();
+        private readonly Timer timer = new();
         public MainView()
         {
             InitializeComponent();
@@ -16,7 +16,7 @@ namespace PresentationLayer.Views
 
         }
 
-        private void Timer_Tick(object sender, System.EventArgs e) => presenter.Rotate();
+        private void Timer_Tick(object sender, System.EventArgs e) => presenter.Update();
 
         public MainPresenter Presenter { set => presenter = value; }
 
