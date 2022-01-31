@@ -31,6 +31,7 @@ namespace PresentationLayer.Presenters
                 Rotate();
             }
         }
+        private Matrix4x4 modelMatrix;
         private Matrix4x4 viewMatrix;
         private Matrix4x4 projectionMatrix;
         private List<ModelTriangle> triangles = new();
@@ -77,7 +78,8 @@ namespace PresentationLayer.Presenters
 
         private CanvasPoint ProjectPoint(ModelPoint point)
         {
-            var vec = Vector4.Transform(Vector4.Transform(point.Coordinates4, viewMatrix), projectionMatrix);
+
+            var vec = Vector4.Transform(Vector4.Transform(Vector4.Transform(point.Coordinates4, modelMatrix), viewMatrix), projectionMatrix);
             vec /= vec.W;
             return ConvertToCanvas(vec);
         }
@@ -111,55 +113,18 @@ namespace PresentationLayer.Presenters
         //    }
         //}
 
-        private void DrawTriangles(List<List<Vector3>> triangles)
-        {
-            Graphics g = Graphics.FromImage(bitmap);
-            foreach(var triangle in triangles)
-            {
-                g.DrawPolygon(Pens.Black, triangle.Select(point => new Point((int)point.X, (int)point.Y)).ToArray());
-            }
-
-        }
-        private void ExtractTriangles()
-        {
-            //triangles.Clear();
-            //for(int i = 0;i <= 1; ++i)
-            //{
-            //    triangles.Add(new List<double[]> { new double[] { 0, 0, i, 1 }, new double[] { 0, 1, i, 1 }, new double[] { 1, 1, i, 1 } });
-            //    triangles.Add(new List<double[]> { new double[] { 0, 0, i, 1 }, new double[] { 1, 0, i, 1 }, new double[] { 1, 1, i, 1 } });
-            //}
-            //for (int i = 0; i <= 1; ++i)
-            //{
-            //    triangles.Add(new List<double[]> { new double[] { 0, i, 0, 1 }, new double[] { 0, i, 1, 1 }, new double[] { 1, i, 1, 1 } });
-            //    triangles.Add(new List<double[]> { new double[] { 0, i, 0, 1 }, new double[] { 1, i, 0, 1 }, new double[] { 1, i, 1, 1 } });
-            //}
-            //for (int i = 0; i <= 1; ++i)
-            //{
-            //    triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 1, 0, 1 }, new double[] { i, 1, 1, 1 } });
-            //    triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 0, 1, 1 }, new double[] { i, 1, 1, 1 } });
-            //}
-        }
-
         private int alpha = 0;
         public void Rotate(int degree = 5)
         {
             using Graphics g1 = Graphics.FromImage(bitmap);
             g1.Clear(Color.White);
-
+            //modelMatrix = Matrix4x4.Identity;
+            modelMatrix = Matrix4x4.CreateTranslation(new Vector3(0.5f, 1, 0));
+            //modelMatrix = Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, new Vector3(0.5f, 1, 0));
             viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
             projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
-            //triangles[0].Points[0] = new ModelPoint(triangles[0].Points[0].Coordinates.X + 0.05f, triangles[0].Points[0].Coordinates.Y, triangles[0].Points[0].Coordinates.Z);
             var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
             var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
-            //double rad = Math.PI * alpha / 180;
-            //e = 1 / Math.Tan(fov / 2);
-            //a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
-            //double[,] mm = { { Math.Cos(rad), -Math.Sin(rad), 0, 0 }, { Math.Sin(rad), Math.Cos(rad), 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-            //double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
-            //ModelMatrix = mm;
-            //ProjectionMatrix = pm;
-            //var projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
-            //ModelMatrix = mm;
             double[,] zbuffer = new double[view.CanvasWidth, view.CanvasHeight];
             for (int i = 0; i < zbuffer.GetLength(0); i++)
                 for (int j = 0; j < zbuffer.GetLength(1); j++)
@@ -167,26 +132,13 @@ namespace PresentationLayer.Presenters
             //DrawTriangles(projected_triangles);
             var point = ProjectPoint(new ModelPoint(0.5f, 1, 0));
             var center = ProjectPoint(new ModelPoint(0, 0, 0));
-            //var p1 = ProjectPoint(new ModelPoint(-0.1f, -0.1f, 0.1f));
-            //var p2 = ProjectPoint(new ModelPoint(-0.1f, 2.1f, 0.1f));
-            //var p3 = ProjectPoint(new ModelPoint(1.1f, 2.1f, 0.1f));
-            //var p4 = ProjectPoint(new ModelPoint(1.1f, -0.1f, 0.1f));
             var p1 = ProjectPoint(new ModelPoint(0f, 0f, 0.1f));
             var p2 = ProjectPoint(new ModelPoint(0f, 2f, 0.1f));
             var p3 = ProjectPoint(new ModelPoint(1f, 2f, 0f));
             var p4 = ProjectPoint(new ModelPoint(1f, 0f, 0f));
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
-            //drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 2000);
-            //rad *= 2;
-            //double[,] mm2 = { { 1, 0, 0, 0 }, { 0, Math.Cos(rad), -Math.Sin(rad), 0 }, { 0, Math.Sin(rad), Math.Cos(rad), 0 }, { 0, 0, 0, 1 } };
-
-            //ModelMatrix = mm2;
-
-            //projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
-            //DrawTriangles(projected_triangles);
             drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer);
             drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
-            DrawingService.DrawLineBresenham(fastBitmap, Color.Black, p4, p3, zbuffer);
             bitmap = fastBitmap.Bitmap;
             using Graphics g = Graphics.FromImage(bitmap);
             //g.FillRectangle(Brushes.Black, point.Coordinates.X, point.Coordinates.Y, 5, 5);
