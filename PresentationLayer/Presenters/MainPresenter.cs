@@ -1,14 +1,14 @@
-﻿using InfrastructureLayer;
+﻿using DomainLayer;
+using DomainLayer.Cameras;
+using InfrastructureLayer;
 using InfrastructureLayer.Services;
 using PresentationLayer.ViewLoaders;
 using PresentationLayer.Views;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Numerics;
-using System.Linq;
 using System.Collections.Generic;
-using DomainLayer;
+using System.Drawing;
+using System.Linq;
+using System.Numerics;
 
 namespace PresentationLayer.Presenters
 {
@@ -37,6 +37,8 @@ namespace PresentationLayer.Presenters
         private List<ModelTriangle> triangles = new();
         private List<ModelRectangle> rectangles = new();
         private MovingCube cube = new();
+        private List<Camera> cameras = new();
+        private int activeCameraId = 0;
         public MainPresenter(IMainView view, IViewLoader viewLoader)
         {
             this.view = view;
@@ -74,6 +76,10 @@ namespace PresentationLayer.Presenters
             (triangles, rectangles) = sceneService.GetScene();
             (cube.Triangles, cube.Walls) = sceneService.GetCube();
             cube.Center = new ModelPoint(0.5f, 1, .1f);
+            cameras.Add(new StaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1)));
+            cameras.Add(new CubeFollowingCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1), cube));
+            cameras.Add(new CubeOnTopCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0, 0, 0), new Vector3(0, 0, 1), cube));
+
             Rotate();
             this.view.CanvasImage = bitmap;
             this.view.RedrawCanvas();
@@ -111,6 +117,11 @@ namespace PresentationLayer.Presenters
             cube.Rotation += angle;
         }
 
+        public void SwitchCamera()
+        {
+            activeCameraId = (activeCameraId + 1) % cameras.Count;
+        }
+
         //private void DrawPoints(Vector3[] points)
         //{
         //    Graphics g = Graphics.FromImage(bitmap);
@@ -131,7 +142,8 @@ namespace PresentationLayer.Presenters
             //modelMatrix = Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, new Vector3(0.5f, 1, 0));
             modelMatrix = Matrix4x4.Identity;
             //viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
-            viewMatrix = Matrix4x4.CreateLookAt(new Vector3(cube.Center.X, cube.Center.Y, 2), Vector3.Zero, new Vector3(0, 0, 1));
+            Camera activeCamera = cameras[activeCameraId];
+            viewMatrix = Matrix4x4.CreateLookAt(activeCamera.Position.Coordinates, activeCamera.Target.Coordinates, activeCamera.UpVector);
             projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
             var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
             var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();

@@ -69,6 +69,9 @@ namespace PresentationLayer.Views
                 case Keys.Q:
                     presenter.MoveCube(angle: 5);
                     break;
+                case Keys.C:
+                    presenter.SwitchCamera();
+                    break;
             }
         }
     }
