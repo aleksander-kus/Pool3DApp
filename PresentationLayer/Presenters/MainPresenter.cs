@@ -17,11 +17,12 @@ namespace PresentationLayer.Presenters
         private Bitmap bitmap;
         private readonly IMainView view;
         private readonly IViewLoader viewLoader;
-        private readonly IDrawingService drawingService;
+        private readonly DrawingService drawingService;
         private readonly MatrixService matrixService;
+        private readonly SceneService sceneService;
         private const int n = 1;
         private const double f = 100;
-        private double fov = Math.PI / 180 * 45; // kat patrzenia w stopniach
+        private double fov = Math.PI / 180 * 60; // kat patrzenia w stopniach
         public int Fov
         {
             set
@@ -30,30 +31,25 @@ namespace PresentationLayer.Presenters
                 Rotate();
             }
         }
-
-        private double e;
-        private double a = 1; // aspect ratio picture boxa (H / W)
-        private double[,] ModelMatrix;
         private Matrix4x4 viewMatrix;
         private Matrix4x4 projectionMatrix;
-        private double[][] Points;
-        private List<List<int>> connections;
         private List<ModelTriangle> triangles = new();
+        private List<ModelRectangle> rectangles = new();
         public MainPresenter(IMainView view, IViewLoader viewLoader)
         {
-            Matrix4x4 matrixHaha;
             this.view = view;
             this.viewLoader = viewLoader;
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
             drawingService = new DrawingService();
             matrixService = new MatrixService();
+            sceneService = new SceneService();
 
-            e = 1 / Math.Tan(fov / 2);
-            a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
-            double[,] mm = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-            double[,] vm = { { 0, 1, 0, -0.5 }, { 0, 0, 1, -0.5 }, { 1, 0, 0, -10 }, { 0, 0, 0, 1 } };
-            double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
-            ModelMatrix = mm;
+            //e = 1 / Math.Tan(fov / 2);
+            //a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
+            //double[,] mm = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
+            //double[,] vm = { { 0, 1, 0, -0.5 }, { 0, 0, 1, -0.5 }, { 1, 0, 0, -10 }, { 0, 0, 0, 1 } };
+            //double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
+            //ModelMatrix = mm;
             //double[][] points = { new double[]{ 0, 0, 0, 1 }, new double[]{ 1, 0, 0, 1 }, new double[]{ 1, 1, 0, 1 }, new double[]{ 0, 1, 0, 1 },
             //new double[]{ 0, 0, 1, 1 }, new double[]{ 1, 0, 1, 1 }, new double[]{ 1, 1, 1, 1 }, new double[]{ 0, 1, 1, 1 }};
             //Points = points;
@@ -73,19 +69,7 @@ namespace PresentationLayer.Presenters
             //}
             //connections = connectedWith;
             //ExtractTriangles();
-            viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 3, 3), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
-            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)a, n, (float)f);
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, 2, 0), new ModelPoint(1, 0, 0) }, Color.Green));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(1, 2, 0), new ModelPoint(0, 2, 0), new ModelPoint(1, 0, 0) }, Color.Green));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, 2, 0), new ModelPoint(0, 0, 0.3f) }, Color.Brown));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(0, 2, 0.3f), new ModelPoint(0, 2, 0), new ModelPoint(0, 0, 0.3f) }, Color.Brown)); 
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(1, 0, 0), new ModelPoint(0, 0, 0.3f) }, Color.Brown));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(1, 0, 0.3f), new ModelPoint(1, 0, 0), new ModelPoint(0, 0, 0.3f) }, Color.Brown));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(1, 2, 0), new ModelPoint(0, 2, 0), new ModelPoint(1, 2, 0.3f) }, Color.Brown));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(0, 2, 0.3f), new ModelPoint(0, 2, 0), new ModelPoint(1, 2, 0.3f) }, Color.Brown));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(1, 0, 0), new ModelPoint(1, 2, 0), new ModelPoint(1, 0, 0.3f) }, Color.Brown));
-            triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(1, 2, 0.3f), new ModelPoint(1, 2, 0), new ModelPoint(1, 0, 0.3f) }, Color.Brown));
-            //triangles.Add(new ModelTriangle(new List<ModelPoint> { new ModelPoint(1, 2, 0), new ModelPoint(0, 2, 0), new ModelPoint(1, 0, 2) }, Color.Yellow));
+            (triangles, rectangles) = sceneService.GetScene();
             Rotate();
             this.view.CanvasImage = bitmap;
             this.view.RedrawCanvas();
@@ -154,9 +138,11 @@ namespace PresentationLayer.Presenters
         private int alpha = 0;
         public void Rotate(int degree = 5)
         {
+            using Graphics g1 = Graphics.FromImage(bitmap);
+            g1.Clear(Color.White);
 
-            //g.Clear(Color.White);
-
+            viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
+            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
             //triangles[0].Points[0] = new ModelPoint(triangles[0].Points[0].Coordinates.X + 0.05f, triangles[0].Points[0].Coordinates.Y, triangles[0].Points[0].Coordinates.Z);
             var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
 
@@ -176,6 +162,14 @@ namespace PresentationLayer.Presenters
             //DrawTriangles(projected_triangles);
             var point = ProjectPoint(new ModelPoint(0.5f, 1, 0));
             var center = ProjectPoint(new ModelPoint(0, 0, 0));
+            //var p1 = ProjectPoint(new ModelPoint(-0.1f, -0.1f, 0.1f));
+            //var p2 = ProjectPoint(new ModelPoint(-0.1f, 2.1f, 0.1f));
+            //var p3 = ProjectPoint(new ModelPoint(1.1f, 2.1f, 0.1f));
+            //var p4 = ProjectPoint(new ModelPoint(1.1f, -0.1f, 0.1f));
+            var p1 = ProjectPoint(new ModelPoint(0f, 0f, 0.1f));
+            var p2 = ProjectPoint(new ModelPoint(0f, 2f, 0.1f));
+            var p3 = ProjectPoint(new ModelPoint(1f, 2f, 0.1f));
+            var p4 = ProjectPoint(new ModelPoint(1f, 0f, 0.1f));
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
             //drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 2000);
             //rad *= 2;
@@ -188,8 +182,9 @@ namespace PresentationLayer.Presenters
             drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer, 4321);
             bitmap = fastBitmap.Bitmap;
             using Graphics g = Graphics.FromImage(bitmap);
-            g.FillRectangle(Brushes.Black, point.Coordinates.X, point.Coordinates.Y, 5, 5);
-            g.FillRectangle(Brushes.Black, center.Coordinates.X, center.Coordinates.Y, 5, 5);
+            //g.FillRectangle(Brushes.Black, point.Coordinates.X, point.Coordinates.Y, 5, 5);
+            //g.FillRectangle(Brushes.Black, center.Coordinates.X, center.Coordinates.Y, 5, 5);
+            g.DrawPolygon(new Pen(Brushes.Black, 1), new PointF[] { new PointF(p1.Coordinates.X, p1.Coordinates.Y), new PointF(p2.Coordinates.X, p2.Coordinates.Y), new PointF(p3.Coordinates.X, p3.Coordinates.Y), new PointF(p4.Coordinates.X, p4.Coordinates.Y) });
             view.CanvasImage = bitmap;
             view.RedrawCanvas();
             alpha += degree;

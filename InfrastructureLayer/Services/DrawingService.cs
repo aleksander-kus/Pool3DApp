@@ -7,9 +7,13 @@ using System.Numerics;
 
 namespace InfrastructureLayer.Services
 {
-    public class DrawingService : IDrawingService
+    public class DrawingService
     {
-        public void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangels, double[,] zbuffer, int seed)
+        public void DrawContour(IFastBitmap bitmap, List<CanvasRectangle> rectangles, double [,] zbuffer)
+        {
+
+        }
+        public void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangels, double[,] zbuffer)
         {
             triangels.ForEach(triangle => ScanLineColoring(bitmap, triangle.Points.Select(point => point.Coordinates).ToList(), triangle.Color, zbuffer));
             //Random random = new Random(seed);

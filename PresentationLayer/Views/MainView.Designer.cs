@@ -103,7 +103,7 @@ namespace PresentationLayer.Views
             // fovLabel
             // 
             this.fovLabel.AutoSize = true;
-            this.fovLabel.Location = new System.Drawing.Point(137, 36);
+            this.fovLabel.Location = new System.Drawing.Point(137, 31);
             this.fovLabel.Name = "fovLabel";
             this.fovLabel.Size = new System.Drawing.Size(32, 15);
             this.fovLabel.TabIndex = 1;
@@ -115,12 +115,12 @@ namespace PresentationLayer.Views
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fovBar.Location = new System.Drawing.Point(3, 6);
             this.fovBar.Maximum = 120;
-            this.fovBar.Minimum = 10;
+            this.fovBar.Minimum = 30;
             this.fovBar.Name = "fovBar";
             this.fovBar.Size = new System.Drawing.Size(329, 45);
             this.fovBar.TabIndex = 0;
             this.fovBar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.fovBar.Value = 45;
+            this.fovBar.Value = 50;
             this.fovBar.ValueChanged += new System.EventHandler(this.fovBar_ValueChanged);
             // 
             // MainView
