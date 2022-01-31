@@ -59,18 +59,8 @@ namespace PresentationLayer.Presenters
             };
 
             projectionService = new(scene, projectionParameters, drawingService);
-
-            //BALL = sceneService.GenerateSphere(25, 25, 0.1f, Color.Blue);
             Update();
         }
-
-
-
-        //private CanvasRectangle ProjectRectangle(ModelRectangle rectangle)
-        //{
-        //    return new CanvasRectangle(rectangle.Points.Select(point => ProjectPoint(point)).ToList(), rectangle.Color);
-        //}
-
 
         public void MoveCube(float x = 0, float y = 0, float z = 0, int angle = 0)
         {
@@ -94,22 +84,6 @@ namespace PresentationLayer.Presenters
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
 
             projectionService.ProjectScene(fastBitmap);
-            //modelMatrix = Matrix4x4.Identity;
-            //ProjectTriangles(triangles, fastBitmap, zbuffer);
-            ////var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            ////var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
-           
-            ////drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
-
-            ////var projectedBALL = BALL.Select(triangle => ProjectTriangle(triangle)).ToList();
-            ////var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
-            ////drawingService.ColorTriangles(fastBitmap, projectedBALL, zbuffer);
-            ////drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
-
-
-            //ProjectTriangles(cube.Triangles, fastBitmap, zbuffer);
-            ////var projectedCubeWalls = cube.Rectangles.Select(wall => ProjectRectangle(wall)).ToList();
-            ////drawingService.DrawContour(fastBitmap, projectedCubeWalls, Color.Black, zbuffer);
             bitmap = fastBitmap.Bitmap;
             view.CanvasImage = bitmap;
             view.RedrawCanvas();

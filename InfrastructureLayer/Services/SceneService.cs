@@ -18,7 +18,7 @@ namespace InfrastructureLayer.Services
         public float CubeLength { get; set; } = 0.05f;
         public const int CubeMeridians = 20;
         public const int CubeParallels = 20;
-        public float CubeRadius = 0.05f;
+        public float SphereRadius = 0.07f;
 
         public Scene GetScene()
         {
@@ -35,19 +35,24 @@ namespace InfrastructureLayer.Services
                 {
                     new ModelSphere()
                     {
-                        Center = new ModelPoint(0.5f, 0.5f, CubeRadius),
-                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, CubeRadius, Color.White)
+                        Center = new ModelPoint(0.5f, 0.5f, SphereRadius),
+                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, SphereRadius, Color.White)
                     },
                     new ModelSphere()
                     {
-                        Center = new ModelPoint(0.25f, 0.5f, CubeRadius),
-                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, CubeRadius, Color.Black)
+                        Center = new ModelPoint(0.5f + SphereRadius, 1.5f + SphereRadius, SphereRadius),
+                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, SphereRadius, Color.Black)
                     },
                     new ModelSphere()
                     {
-                        Center = new ModelPoint(0.75f, 0.5f, CubeRadius),
-                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, CubeRadius, Color.Red)
-                    }
+                        Center = new ModelPoint(0.5f - SphereRadius, 1.5f + SphereRadius, SphereRadius),
+                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, SphereRadius, Color.Blue)
+                    },
+                    new ModelSphere()
+                    {
+                        Center = new ModelPoint(0.5f, 1.5f, SphereRadius),
+                        Triangles = GenerateSphere(CubeMeridians, CubeParallels, SphereRadius, Color.Red)
+                    },
                 }
             };
         }

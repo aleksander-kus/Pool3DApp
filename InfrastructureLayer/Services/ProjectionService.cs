@@ -36,6 +36,7 @@ namespace InfrastructureLayer.Services
 
             ProjectTable(bitmap, zbuffer);
             ProjectCube(bitmap, zbuffer);
+            ProjectSpheres(bitmap, zbuffer);
         }
 
         private void ProjectTable(IFastBitmap bitmap, double[,] zbuffer)
@@ -50,6 +51,16 @@ namespace InfrastructureLayer.Services
             modelMatrix = Matrix4x4.CreateTranslation(scene.Cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates);
             var projectedTriangles = scene.Cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
             drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer);
+        }
+
+        private void ProjectSpheres(IFastBitmap bitmap, double[,] zbuffer)
+        {
+            foreach(var sphere in scene.Spheres)
+            {
+                modelMatrix = Matrix4x4.CreateTranslation(sphere.Center.Coordinates);
+                var projectedTriangles = sphere.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
+                drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer);
+            }
         }
 
         private CanvasTriangle ProjectTriangle(ModelTriangle triangle)
