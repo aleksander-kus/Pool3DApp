@@ -122,6 +122,7 @@ namespace PresentationLayer.Views
             this.fovBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.fovBar.Value = 50;
             this.fovBar.ValueChanged += new System.EventHandler(this.fovBar_ValueChanged);
+            this.fovBar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fovBar_KeyDown);
             // 
             // MainView
             // 

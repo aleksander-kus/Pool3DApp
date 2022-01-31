@@ -105,6 +105,12 @@ namespace PresentationLayer.Presenters
             return new CanvasPoint(x, y, z);
         }
 
+        public void MoveCube(float x = 0, float y = 0, float z = 0, int angle = 0)
+        {
+            cube.Center = new ModelPoint(cube.Center.X + x, cube.Center.Y + y, cube.Center.Z + z);
+            cube.Rotation += angle;
+        }
+
         //private void DrawPoints(Vector3[] points)
         //{
         //    Graphics g = Graphics.FromImage(bitmap);
@@ -124,7 +130,8 @@ namespace PresentationLayer.Presenters
             //modelMatrix = Matrix4x4.CreateTranslation(new Vector3(0.5f, 1, 0));
             //modelMatrix = Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, new Vector3(0.5f, 1, 0));
             modelMatrix = Matrix4x4.Identity;
-            viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
+            //viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
+            viewMatrix = Matrix4x4.CreateLookAt(new Vector3(cube.Center.X, cube.Center.Y, 2), Vector3.Zero, new Vector3(0, 0, 1));
             projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
             var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
             var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
@@ -143,7 +150,7 @@ namespace PresentationLayer.Presenters
             drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer);
             drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
 
-            modelMatrix = Matrix4x4.CreateTranslation(cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, cube.Center.Coordinates);
+            modelMatrix = Matrix4x4.CreateTranslation(cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(cube.Rotation * (float)Math.PI / 180, cube.Center.Coordinates);
             var projectedCubeTriangles = cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
             var projectedCubeWalls = cube.Walls.Select(wall => ProjectRectangle(wall)).ToList();
             drawingService.ColorTriangles(fastBitmap, projectedCubeTriangles, zbuffer);

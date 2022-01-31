@@ -45,5 +45,31 @@ namespace PresentationLayer.Views
             presenter.Fov = fovBar.Value;
             fovLabel.Text = $"Fov: {fovBar.Value}";
         }
+
+        private void fovBar_KeyDown(object sender, KeyEventArgs e)
+        {
+
+            switch(e.KeyCode)
+            {
+                case Keys.W:
+                    presenter.MoveCube(x: -0.02f);
+                    break;
+                case Keys.D:
+                    presenter.MoveCube(y: 0.02f);
+                    break;
+                case Keys.S:
+                    presenter.MoveCube(x: 0.02f);
+                    break;
+                case Keys.A:
+                    presenter.MoveCube(y: -0.02f);
+                    break;
+                case Keys.E:
+                    presenter.MoveCube(angle: -5);
+                    break;
+                case Keys.Q:
+                    presenter.MoveCube(angle: 5);
+                    break;
+            }
+        }
     }
 }

@@ -17,5 +17,8 @@ namespace DomainLayer
         }
 
         public Vector4 Coordinates4 => new Vector4(Coordinates.X, Coordinates.Y, Coordinates.Z, 1);
+        public float X => Coordinates.X;
+        public float Y => Coordinates.Y;
+        public float Z => Coordinates.Z;
     }
 }
