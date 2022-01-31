@@ -20,5 +20,9 @@ namespace DomainLayer
         {
             Coordinates = new Vector3(coords.X, coords.Y, coords.Z);
         }
+
+        public float X => Coordinates.X;
+        public float Y => Coordinates.Y;
+        public float Z => Coordinates.Z;
     }
 }

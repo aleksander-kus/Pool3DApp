@@ -9,9 +9,15 @@ namespace InfrastructureLayer.Services
 {
     public class DrawingService
     {
-        public void DrawContour(IFastBitmap bitmap, List<CanvasRectangle> rectangles, double [,] zbuffer)
+        public void DrawContour(IFastBitmap bitmap, List<CanvasRectangle> rectangles, Color color, double [,] zbuffer)
         {
-
+            foreach(var rectangle in rectangles)
+            {
+                for (int i = 0; i < rectangle.Points.Count; ++i)
+                {
+                    DrawLineBresenham(bitmap, color, rectangle[i], rectangle[(i + 1) % rectangle.Points.Count], zbuffer);
+                }
+            }
         }
         public void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangels, double[,] zbuffer)
         {
@@ -102,6 +108,88 @@ namespace InfrastructureLayer.Services
             float z2 = (x - p1.X) * (y - p2.Y) + (x - p2.X) * (y - p3.Y) + (x - p3.X) * (y - p1.Y) - (x - p1.X) * (y - p3.Y) - (x - p2.X) * (y - p1.Y) - (x - p3.X) * (y - p2.Y);
 
             return z1 / z2;
+        }
+
+        /// <summary>
+        /// Draws a between specified points with Bresenham's Algorithm
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="pen"></param>
+        /// <param name="p1">Starting point</param>
+        /// <param name="p2">Ending point</param>
+        public static void DrawLineBresenham(IFastBitmap bitmap, Color color, CanvasPoint p1, CanvasPoint p2, double[,] zbuffer)
+        {
+            using Brush b = new SolidBrush(color);
+            int dx = (int)Math.Abs(p2.X - p1.X), dy = (int)Math.Abs(p2.Y - p1.Y);
+            int x_increment = (p1.X < p2.X) ? 1 : p1.X == p2.X ? 0 : -1;
+            int y_increment = (p1.Y < p2.Y) ? 1 : p1.Y == p2.Y ? 0 : -1;
+            // first pixel
+            int x = (int)p1.X, y = (int)p1.Y;
+            bitmap.SetPixel(x, y, color);
+            // go along X-axis
+            if (dx > dy)
+            {
+                int d = 2 * dy - dx;
+                int across_increment = (dy - dx) * 2;
+                int same_line_increment = 2 * dy;
+                float z_delta = (p2.Z - p1.Z) / (p2.X - p1.X);
+                if (x_increment == -1)
+                    z_delta = -z_delta;
+                float z = p1.Z;
+                // pętla po kolejnych x
+                while (x != p2.X)
+                {
+                    if (d < 0)  // remain in the same line
+                    {
+                        d += same_line_increment;
+                        x += x_increment;
+                    }
+                    else  // go across
+                    {
+                        d += across_increment;
+                        x += x_increment;
+                        y += y_increment;
+                    }
+                    z += z_delta;
+                    if (x >= 0 && x < zbuffer.GetLength(0) && y >= 0 && y < zbuffer.GetLength(1) && z < zbuffer[x, y])
+                    {
+                        zbuffer[x, y] = z;
+                        bitmap.SetPixel(x, y, color);
+                    }
+
+                }
+            }
+            // go along Y-axis
+            else
+            {
+                int d = 2 * dx - dy;
+                int across_increment = (dx - dy) * 2;
+                int same_line_increment = 2 * dx;
+                float z_delta = (p2.Z - p1.Z) / (p2.Y - p1.Y);
+                if (y_increment == -1)
+                    z_delta = -z_delta;
+                float z = p1.Z;
+                while (y != p2.Y)
+                {
+                    if (d < 0)  // remain in the same line
+                    {
+                        d += same_line_increment;
+                        y += y_increment;
+                    }
+                    else  // go across
+                    {
+                        d += across_increment;
+                        x += x_increment;
+                        y += y_increment;
+                    }
+                    z += z_delta;
+                    if (x >= 0 && x < zbuffer.GetLength(0) && y >= 0 && y < zbuffer.GetLength(1) && z < zbuffer[x, y])
+                    {
+                        zbuffer[x, y] = z;
+                        bitmap.SetPixel(x, y, color);
+                    }
+                }
+            }
         }
     }
 }

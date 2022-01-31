@@ -87,6 +87,11 @@ namespace PresentationLayer.Presenters
             return new CanvasTriangle(triangle.Points.Select(point => ProjectPoint(point)).ToList(), triangle.Color);
         }
 
+        private CanvasRectangle ProjectRectangle(ModelRectangle rectangle)
+        {
+            return new CanvasRectangle(rectangle.Points.Select(point => ProjectPoint(point)).ToList(), rectangle.Color);
+        }
+
         private CanvasPoint ConvertToCanvas(Vector4 coords)
         {
             int x = (int)Math.Round(view.CanvasWidth / 2 * (coords.X + 1));
@@ -95,16 +100,16 @@ namespace PresentationLayer.Presenters
             return new CanvasPoint(x, y, z);
         }
 
-        private void DrawPoints(Vector3[] points)
-        {
-            Graphics g = Graphics.FromImage(bitmap);
-            for(int i = 0; i < points.Length; ++i)
-            {
-                g.FillRectangle(Brushes.Black, points[i].X, points[i].Y, 2, 2);
-                for(int j = 0; j < connections[i].Count; ++j)
-                    g.DrawLine(Pens.Black, new Point((int)points[i].X, (int)points[i].Y), new Point((int)points[connections[i][j]].X, (int)points[connections[i][j]].Y));
-            }
-        }
+        //private void DrawPoints(Vector3[] points)
+        //{
+        //    Graphics g = Graphics.FromImage(bitmap);
+        //    for(int i = 0; i < points.Length; ++i)
+        //    {
+        //        g.FillRectangle(Brushes.Black, points[i].X, points[i].Y, 2, 2);
+        //        for(int j = 0; j < connections[i].Count; ++j)
+        //            g.DrawLine(Pens.Black, new Point((int)points[i].X, (int)points[i].Y), new Point((int)points[connections[i][j]].X, (int)points[connections[i][j]].Y));
+        //    }
+        //}
 
         private void DrawTriangles(List<List<Vector3>> triangles)
         {
@@ -145,7 +150,7 @@ namespace PresentationLayer.Presenters
             projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
             //triangles[0].Points[0] = new ModelPoint(triangles[0].Points[0].Coordinates.X + 0.05f, triangles[0].Points[0].Coordinates.Y, triangles[0].Points[0].Coordinates.Z);
             var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-
+            var projectedRectangles = rectangles.Select(rectangle => ProjectRectangle(rectangle)).ToList();
             //double rad = Math.PI * alpha / 180;
             //e = 1 / Math.Tan(fov / 2);
             //a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
@@ -168,8 +173,8 @@ namespace PresentationLayer.Presenters
             //var p4 = ProjectPoint(new ModelPoint(1.1f, -0.1f, 0.1f));
             var p1 = ProjectPoint(new ModelPoint(0f, 0f, 0.1f));
             var p2 = ProjectPoint(new ModelPoint(0f, 2f, 0.1f));
-            var p3 = ProjectPoint(new ModelPoint(1f, 2f, 0.1f));
-            var p4 = ProjectPoint(new ModelPoint(1f, 0f, 0.1f));
+            var p3 = ProjectPoint(new ModelPoint(1f, 2f, 0f));
+            var p4 = ProjectPoint(new ModelPoint(1f, 0f, 0f));
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
             //drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 2000);
             //rad *= 2;
@@ -179,12 +184,14 @@ namespace PresentationLayer.Presenters
 
             //projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
             //DrawTriangles(projected_triangles);
-            drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer, 4321);
+            drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer);
+            drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
+            DrawingService.DrawLineBresenham(fastBitmap, Color.Black, p4, p3, zbuffer);
             bitmap = fastBitmap.Bitmap;
             using Graphics g = Graphics.FromImage(bitmap);
             //g.FillRectangle(Brushes.Black, point.Coordinates.X, point.Coordinates.Y, 5, 5);
             //g.FillRectangle(Brushes.Black, center.Coordinates.X, center.Coordinates.Y, 5, 5);
-            g.DrawPolygon(new Pen(Brushes.Black, 1), new PointF[] { new PointF(p1.Coordinates.X, p1.Coordinates.Y), new PointF(p2.Coordinates.X, p2.Coordinates.Y), new PointF(p3.Coordinates.X, p3.Coordinates.Y), new PointF(p4.Coordinates.X, p4.Coordinates.Y) });
+            //g.DrawPolygon(new Pen(Brushes.Black, 1), new PointF[] { new PointF(p1.Coordinates.X, p1.Coordinates.Y), new PointF(p2.Coordinates.X, p2.Coordinates.Y), new PointF(p3.Coordinates.X, p3.Coordinates.Y), new PointF(p4.Coordinates.X, p4.Coordinates.Y) });
             view.CanvasImage = bitmap;
             view.RedrawCanvas();
             alpha += degree;

@@ -49,6 +49,8 @@ namespace InfrastructureLayer
 
         public void SetPixel(int x, int y, Color color)
         {
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+                return;
             bitmap[y * Width * BytesPerPixel + x * BytesPerPixel] = color.B;
             bitmap[y * Width * BytesPerPixel + x * BytesPerPixel + 1] = color.G;
             bitmap[y * Width * BytesPerPixel + x * BytesPerPixel + 2] = color.R;
