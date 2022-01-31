@@ -36,6 +36,7 @@ namespace PresentationLayer.Presenters
         private Matrix4x4 projectionMatrix;
         private List<ModelTriangle> triangles = new();
         private List<ModelRectangle> rectangles = new();
+        private MovingCube cube = new();
         public MainPresenter(IMainView view, IViewLoader viewLoader)
         {
             this.view = view;
@@ -71,6 +72,8 @@ namespace PresentationLayer.Presenters
             //connections = connectedWith;
             //ExtractTriangles();
             (triangles, rectangles) = sceneService.GetScene();
+            (cube.Triangles, cube.Walls) = sceneService.GetCube();
+            cube.Center = new ModelPoint(0.5f, 1, .1f);
             Rotate();
             this.view.CanvasImage = bitmap;
             this.view.RedrawCanvas();
@@ -118,9 +121,9 @@ namespace PresentationLayer.Presenters
         {
             using Graphics g1 = Graphics.FromImage(bitmap);
             g1.Clear(Color.White);
-            //modelMatrix = Matrix4x4.Identity;
-            modelMatrix = Matrix4x4.CreateTranslation(new Vector3(0.5f, 1, 0));
+            //modelMatrix = Matrix4x4.CreateTranslation(new Vector3(0.5f, 1, 0));
             //modelMatrix = Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, new Vector3(0.5f, 1, 0));
+            modelMatrix = Matrix4x4.Identity;
             viewMatrix = Matrix4x4.CreateLookAt(new Vector3(2, 2.5f, 2), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 1));
             projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView((float)fov, (float)view.CanvasHeight / view.CanvasWidth, n, (float)f);
             var projectedTriangles = triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
@@ -139,6 +142,12 @@ namespace PresentationLayer.Presenters
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
             drawingService.ColorTriangles(fastBitmap, projectedTriangles, zbuffer);
             drawingService.DrawContour(fastBitmap, projectedRectangles, Color.Black, zbuffer);
+
+            modelMatrix = Matrix4x4.CreateTranslation(cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(alpha * (float)Math.PI / 180, cube.Center.Coordinates);
+            var projectedCubeTriangles = cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
+            var projectedCubeWalls = cube.Walls.Select(wall => ProjectRectangle(wall)).ToList();
+            drawingService.ColorTriangles(fastBitmap, projectedCubeTriangles, zbuffer);
+            drawingService.DrawContour(fastBitmap, projectedCubeWalls, Color.Black, zbuffer);
             bitmap = fastBitmap.Bitmap;
             using Graphics g = Graphics.FromImage(bitmap);
             //g.FillRectangle(Brushes.Black, point.Coordinates.X, point.Coordinates.Y, 5, 5);
