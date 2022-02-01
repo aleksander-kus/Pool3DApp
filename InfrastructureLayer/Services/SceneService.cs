@@ -16,10 +16,10 @@ namespace InfrastructureLayer.Services
         public float TableWidth { get; set; } = 1;
         public float TableLength { get; set; } = 2;
         public float SideWidth { get; set; } = 0.1f;
-        public float CubeLength { get; set; } = 0.05f;
+        public float CubeLength { get; set; } = 0.1f;
         public int CubeMeridians { get; set; } = 20;
         public int CubeParallels { get; set; } = 20;
-        public float SphereRadius { get; set; } = 0.1f;
+        public float SphereRadius { get; set; } = 0.05f;
 
         public Scene GetScene()
         {
@@ -29,7 +29,7 @@ namespace InfrastructureLayer.Services
                 Cube = new MovingCube()
                 {
                     Triangles = GenerateCube(),
-                    Center = new ModelPoint(TableWidth / 2, TableLength / 2, TableHeight / 2),
+                    Center = new ModelPoint(TableWidth / 3, TableLength / 2, CubeLength * 2),
                     Rotation = 0
                 },
                 Spheres = new List<ModelSphere>
@@ -41,12 +41,12 @@ namespace InfrastructureLayer.Services
                     },
                     new ModelSphere()
                     {
-                        Center = new ModelPoint(0.5f + SphereRadius, 1.5f + SphereRadius, SphereRadius),
+                        Center = new ModelPoint(0.5f + 2 * SphereRadius, 1.5f + 2 * SphereRadius, SphereRadius),
                         Triangles = GenerateSphere(CubeMeridians, CubeParallels, SphereRadius, Color.Black)
                     },
                     new ModelSphere()
                     {
-                        Center = new ModelPoint(0.5f - SphereRadius, 1.5f + SphereRadius, SphereRadius),
+                        Center = new ModelPoint(0.5f - 2 * SphereRadius, 1.5f + 2 * SphereRadius, SphereRadius),
                         Triangles = GenerateSphere(CubeMeridians, CubeParallels, SphereRadius, Color.Blue)
                     },
                     new ModelSphere()

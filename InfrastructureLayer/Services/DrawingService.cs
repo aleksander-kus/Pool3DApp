@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace InfrastructureLayer.Services
 {
@@ -24,13 +25,14 @@ namespace InfrastructureLayer.Services
                 }
             }
         }
-        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer, Matrix4x4 invertedMatrix)
+        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer, Matrix4x4 invertedMatrix, Camera camera)
         {
-            foreach(var triangle in triangles)
+            //Parallel.ForEach(triangles, triangle => ScanLineColoring(bitmap, triangle, zbuffer, invertedMatrix));
+            foreach (var triangle in triangles)
             {
-                ScanLineColoring(bitmap, triangle, zbuffer, invertedMatrix);
+                ScanLineColoring(bitmap, triangle, zbuffer, invertedMatrix, camera);
             }
-            //triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
+            ////triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
             //Random random = new Random(seed);
             //for(int i = 0; i < triangels.Count; i += 2)
             //{
@@ -44,7 +46,7 @@ namespace InfrastructureLayer.Services
             //    ScanLineColoring(bitmap, triangle, color, zbuffer);
             //}
         }
-        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer, Matrix4x4 invertedMatrix)
+        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer, Matrix4x4 invertedMatrix, Camera camera)
         {
             var shape = triangle.Points.Select(point => ConvertToCanvas(point, bitmap.Width, bitmap.Height)).ToList();
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
@@ -93,15 +95,18 @@ namespace InfrastructureLayer.Services
                         if (x < 0 || x >= bitmap.Width || y < 0 || y >= bitmap.Height)
                             continue;
                         float z = GetZ(x, y, shape[0], shape[1], shape[2]);
-                        if(z < zbuffer[x, y])
-                        {
-                            zbuffer[x,y] = z;
-                            var point = ConvertFromCanvas(new Vector3(x, y, z), bitmap.Width, bitmap.Height);
-                            var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
-                            modelVector /= modelVector.W;
-                            var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
-                            bitmap.SetPixel(x, y, illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color));
-                        }
+                        //lock (zbuffer)
+                        //{
+                            if (z >= zbuffer[x, y])
+                                continue;
+                            else
+                                zbuffer[x, y] = z;
+                        //}
+                        var point = ConvertFromCanvas(new Vector3(x, y, z), bitmap.Width, bitmap.Height);
+                        var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
+                        modelVector /= modelVector.W;
+                        var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
+                        bitmap.SetPixel(x, y, illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera));
                     }
                 }
                 // Update the x value for each edge

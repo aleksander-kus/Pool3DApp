@@ -33,12 +33,18 @@ namespace PresentationLayer.Views
             this.canvasBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ksLabel = new System.Windows.Forms.Label();
+            this.kdLabel = new System.Windows.Forms.Label();
+            this.ksTrackBar = new System.Windows.Forms.TrackBar();
+            this.kdTrackBar = new System.Windows.Forms.TrackBar();
             this.fovLabel = new System.Windows.Forms.Label();
             this.fovBar = new System.Windows.Forms.TrackBar();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fovBar)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,12 +99,60 @@ namespace PresentationLayer.Views
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.ksLabel);
+            this.panel1.Controls.Add(this.kdLabel);
+            this.panel1.Controls.Add(this.ksTrackBar);
+            this.panel1.Controls.Add(this.kdTrackBar);
             this.panel1.Controls.Add(this.fovLabel);
             this.panel1.Controls.Add(this.fovBar);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(335, 428);
             this.panel1.TabIndex = 0;
+            // 
+            // ksLabel
+            // 
+            this.ksLabel.AutoSize = true;
+            this.ksLabel.Location = new System.Drawing.Point(137, 138);
+            this.ksLabel.Name = "ksLabel";
+            this.ksLabel.Size = new System.Drawing.Size(21, 15);
+            this.ksLabel.TabIndex = 5;
+            this.ksLabel.Text = "ks:";
+            // 
+            // kdLabel
+            // 
+            this.kdLabel.AutoSize = true;
+            this.kdLabel.Location = new System.Drawing.Point(137, 87);
+            this.kdLabel.Name = "kdLabel";
+            this.kdLabel.Size = new System.Drawing.Size(23, 15);
+            this.kdLabel.TabIndex = 4;
+            this.kdLabel.Text = "kd:";
+            // 
+            // ksTrackBar
+            // 
+            this.ksTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ksTrackBar.Location = new System.Drawing.Point(3, 108);
+            this.ksTrackBar.Maximum = 100;
+            this.ksTrackBar.Name = "ksTrackBar";
+            this.ksTrackBar.Size = new System.Drawing.Size(329, 45);
+            this.ksTrackBar.TabIndex = 3;
+            this.ksTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.ksTrackBar.Value = 50;
+            this.ksTrackBar.ValueChanged += new System.EventHandler(this.ksTrackBar_ValueChanged);
+            // 
+            // kdTrackBar
+            // 
+            this.kdTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.kdTrackBar.Location = new System.Drawing.Point(3, 57);
+            this.kdTrackBar.Maximum = 100;
+            this.kdTrackBar.Name = "kdTrackBar";
+            this.kdTrackBar.Size = new System.Drawing.Size(329, 45);
+            this.kdTrackBar.TabIndex = 2;
+            this.kdTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.kdTrackBar.Value = 50;
+            this.kdTrackBar.ValueChanged += new System.EventHandler(this.kdTrackBar_ValueChanged);
             // 
             // fovLabel
             // 
@@ -122,7 +176,6 @@ namespace PresentationLayer.Views
             this.fovBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.fovBar.Value = 50;
             this.fovBar.ValueChanged += new System.EventHandler(this.fovBar_ValueChanged);
-            this.fovBar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fovBar_KeyDown);
             // 
             // MainView
             // 
@@ -133,12 +186,16 @@ namespace PresentationLayer.Views
             this.Name = "MainView";
             this.Text = "MainView";
             this.Load += new System.EventHandler(this.MainView_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainView_KeyPress);
             this.Resize += new System.EventHandler(this.MainView_Resize);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fovBar)).EndInit();
             this.ResumeLayout(false);
 
@@ -152,5 +209,9 @@ namespace PresentationLayer.Views
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label fovLabel;
         private System.Windows.Forms.TrackBar fovBar;
+        private System.Windows.Forms.TrackBar ksTrackBar;
+        private System.Windows.Forms.TrackBar kdTrackBar;
+        private System.Windows.Forms.Label ksLabel;
+        private System.Windows.Forms.Label kdLabel;
     }
 }

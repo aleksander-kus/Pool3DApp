@@ -34,6 +34,22 @@ namespace PresentationLayer.Presenters
                 Update();
             }
         }
+        public int Kd
+        {
+            set
+            {
+                illuminationParameters.Kd = value / 100f;
+                Update();
+            }
+        }
+        public int Ks
+        {
+            set
+            {
+                illuminationParameters.Ks = value / 100f;
+                Update();
+            }
+        }
 
         private List<Camera> cameras = new();
         private int activeCameraId = 0;
@@ -79,12 +95,14 @@ namespace PresentationLayer.Presenters
             projectionParameters.Camera = cameras[activeCameraId];
             Update();
         }
-
+        private float cubeYDelta = 0.03f;
         public void Update()
         {
             using Graphics g1 = Graphics.FromImage(bitmap);
             g1.Clear(Color.Black);
-            
+            scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
+            if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
+            //scene.Cube.Rotation += 10;
             //Camera activeCamera = cameras[activeCameraId];
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
 

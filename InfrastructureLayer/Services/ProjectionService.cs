@@ -45,7 +45,7 @@ namespace InfrastructureLayer.Services
             modelMatrix = Matrix4x4.Identity;
             Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
             var projectedTriangles = scene.TableTriangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
+            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix, parameters.Camera);
         }
 
         private void ProjectCube(IFastBitmap bitmap, double[,] zbuffer)
@@ -53,7 +53,7 @@ namespace InfrastructureLayer.Services
             Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
             modelMatrix = Matrix4x4.CreateTranslation(scene.Cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates);
             var projectedTriangles = scene.Cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
+            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix, parameters.Camera);
         }
 
         private void ProjectSpheres(IFastBitmap bitmap, double[,] zbuffer)
@@ -63,7 +63,7 @@ namespace InfrastructureLayer.Services
                 modelMatrix = Matrix4x4.CreateTranslation(sphere.Center.Coordinates);
                 Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
                 var projectedTriangles = sphere.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-                drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
+                drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix, parameters.Camera);
             }
         }
 

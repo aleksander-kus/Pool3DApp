@@ -1,4 +1,5 @@
-﻿using DomainLayer.Dto;
+﻿using DomainLayer;
+using DomainLayer.Dto;
 using System;
 using System.Drawing;
 using System.Numerics;
@@ -14,7 +15,7 @@ namespace InfrastructureLayer.Services
             this.parameters = parameters;
         }
 
-        public Color ComputeColor(Vector3 point, Vector3 normalVector, Color color)
+        public Color ComputeColor(Vector3 point, Vector3 normalVector, Color color, Camera camera)
         {
             // ambient
             var baseColor = color.From255() * parameters.Ka;
@@ -25,12 +26,12 @@ namespace InfrastructureLayer.Services
             var I_L = Vector3.One;
             var N = normalVector;
             //// additional versors
-            var V = new Vector3(0, 0, 1);
+            var V = Vector3.Normalize(camera.Position.Coordinates - point);// / Vector3.DistanceSquared(camera.Position.Coordinates, point);
             var sourceLocation = parameters.MainLightPosition.Coordinates;
             var L = Vector3.Normalize(sourceLocation - point);
 
             var sourceDistance = Vector3.DistanceSquared(sourceLocation, point);
-            I_L *= 1 / sourceDistance;
+            I_L /= sourceDistance;
             var R = 2 * Vector3.Dot(N, L) * N - L;
             baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(V, R), parameters.N);
             //var actualColor2 = I_L * I_O * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(V, R), parameters.N);

@@ -13,7 +13,6 @@ namespace PresentationLayer.Views
             InitializeComponent();
             timer.Tick += Timer_Tick;
             timer.Interval = 50;
-
         }
 
         private void Timer_Tick(object sender, System.EventArgs e) => presenter.Update();
@@ -28,10 +27,13 @@ namespace PresentationLayer.Views
 
         public void RedrawCanvas() => canvasBox.Invalidate();
 
+
+
         private void MainView_Load(object sender, System.EventArgs e)
         {
-            presenter.Fov = fovBar.Value;
-            fovLabel.Text = $"Fov: {fovBar.Value}";
+            fovBar_ValueChanged(null, null);
+            kdTrackBar_ValueChanged(null, null);
+            ksTrackBar_ValueChanged(null, null);
             timer.Start();
         }
 
@@ -40,13 +42,25 @@ namespace PresentationLayer.Views
             presenter.LoadCanvasDimensions();
         }
 
+
         private void fovBar_ValueChanged(object sender, System.EventArgs e)
         {
             presenter.Fov = fovBar.Value;
             fovLabel.Text = $"Fov: {fovBar.Value}";
         }
+        private void kdTrackBar_ValueChanged(object sender, System.EventArgs e)
+        {
+            presenter.Kd = kdTrackBar.Value;
+            kdLabel.Text = $"Kd: {kdTrackBar.Value/100f}";
+        }
 
-        private void fovBar_KeyDown(object sender, KeyEventArgs e)
+        private void ksTrackBar_ValueChanged(object sender, System.EventArgs e)
+        {
+            presenter.Ks = ksTrackBar.Value;
+            ksLabel.Text = $"Ks: {ksTrackBar.Value/100f}";
+        }
+
+        private void MainView_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
@@ -75,6 +89,11 @@ namespace PresentationLayer.Views
                     return;
             }
             presenter.Update();
+        }
+
+        private void MainView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            MessageBox.Show($"Pressed key {e.KeyChar}");
         }
     }
 }
