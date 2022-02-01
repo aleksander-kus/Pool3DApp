@@ -5,10 +5,10 @@ namespace DomainLayer
 {
     public class CanvasTriangle
     {
-        public List<CanvasPoint> Points { get; set; }
+        public List<ModelPoint> Points { get; set; }
         public Color Color { get; set; }
 
-        public CanvasTriangle(List<CanvasPoint> points, Color color)
+        public CanvasTriangle(List<ModelPoint> points, Color color)
         {
             Points = points;
             Color = color;

@@ -48,8 +48,7 @@ namespace PresentationLayer.Views
 
         private void fovBar_KeyDown(object sender, KeyEventArgs e)
         {
-
-            switch(e.KeyCode)
+            switch (e.KeyCode)
             {
                 case Keys.W:
                     presenter.MoveCube(x: -0.02f);

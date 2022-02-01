@@ -9,6 +9,11 @@ namespace InfrastructureLayer.Services
 {
     public class DrawingService
     {
+        private readonly IlluminationService illuminationService;
+        public DrawingService(IlluminationService illuminationService)
+        {
+            this.illuminationService = illuminationService;
+        }
         public void DrawContour(IFastBitmap bitmap, List<CanvasRectangle> rectangles, Color color, double [,] zbuffer)
         {
             foreach(var rectangle in rectangles)
