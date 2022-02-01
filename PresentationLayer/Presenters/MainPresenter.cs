@@ -1,6 +1,7 @@
 ﻿using DomainLayer;
 using DomainLayer.Cameras;
 using DomainLayer.Dto;
+using DomainLayer.Enum;
 using InfrastructureLayer;
 using InfrastructureLayer.Services;
 using PresentationLayer.ViewLoaders;
@@ -24,6 +25,7 @@ namespace PresentationLayer.Presenters
         private readonly IlluminationService illuminationService;
         private readonly ProjectionParameters projectionParameters;
         private readonly IlluminationParameters illuminationParameters;
+        private readonly DrawingParameters drawingParameters;
         private const int n = 1;
         private const float f = 1.1f;
         public int Fov
@@ -51,6 +53,18 @@ namespace PresentationLayer.Presenters
             }
         }
 
+        public ShadingMode ShadingMode
+        {
+            set
+            {
+                if(drawingParameters.ShadingMode != value)
+                {
+                    drawingParameters.ShadingMode = value;
+                    Update();
+                }
+            }
+        }
+
         private List<Camera> cameras = new();
         private int activeCameraId = 0;
         private readonly Scene scene;
@@ -61,8 +75,9 @@ namespace PresentationLayer.Presenters
             this.viewLoader = viewLoader;
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
             illuminationParameters = new();
+            drawingParameters = new();
             illuminationService = new(illuminationParameters);
-            drawingService = new DrawingService(illuminationService);
+            drawingService = new DrawingService(illuminationService, drawingParameters);
             sceneService = new SceneService();
             scene = sceneService.GetScene();
 

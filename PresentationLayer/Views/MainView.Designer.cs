@@ -33,16 +33,22 @@ namespace PresentationLayer.Views
             this.canvasBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.phongButton = new System.Windows.Forms.RadioButton();
+            this.gouraudButton = new System.Windows.Forms.RadioButton();
+            this.constantButton = new System.Windows.Forms.RadioButton();
             this.ksLabel = new System.Windows.Forms.Label();
             this.kdLabel = new System.Windows.Forms.Label();
             this.ksTrackBar = new System.Windows.Forms.TrackBar();
             this.kdTrackBar = new System.Windows.Forms.TrackBar();
             this.fovLabel = new System.Windows.Forms.Label();
             this.fovBar = new System.Windows.Forms.TrackBar();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fovBar)).BeginInit();
@@ -99,21 +105,70 @@ namespace PresentationLayer.Views
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.ksLabel);
             this.panel1.Controls.Add(this.kdLabel);
             this.panel1.Controls.Add(this.ksTrackBar);
             this.panel1.Controls.Add(this.kdTrackBar);
             this.panel1.Controls.Add(this.fovLabel);
             this.panel1.Controls.Add(this.fovBar);
+            this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(335, 428);
             this.panel1.TabIndex = 0;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.phongButton);
+            this.groupBox2.Controls.Add(this.gouraudButton);
+            this.groupBox2.Controls.Add(this.constantButton);
+            this.groupBox2.Location = new System.Drawing.Point(3, 203);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(111, 105);
+            this.groupBox2.TabIndex = 7;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Shading modes";
+            // 
+            // phongButton
+            // 
+            this.phongButton.AutoSize = true;
+            this.phongButton.Checked = true;
+            this.phongButton.Location = new System.Drawing.Point(6, 75);
+            this.phongButton.Name = "phongButton";
+            this.phongButton.Size = new System.Drawing.Size(60, 19);
+            this.phongButton.TabIndex = 2;
+            this.phongButton.TabStop = true;
+            this.phongButton.Text = "Phong";
+            this.phongButton.UseVisualStyleBackColor = true;
+            this.phongButton.CheckedChanged += new System.EventHandler(this.phongButton_CheckedChanged);
+            // 
+            // gouraudButton
+            // 
+            this.gouraudButton.AutoSize = true;
+            this.gouraudButton.Location = new System.Drawing.Point(6, 49);
+            this.gouraudButton.Name = "gouraudButton";
+            this.gouraudButton.Size = new System.Drawing.Size(71, 19);
+            this.gouraudButton.TabIndex = 1;
+            this.gouraudButton.Text = "Gouraud";
+            this.gouraudButton.UseVisualStyleBackColor = true;
+            this.gouraudButton.CheckedChanged += new System.EventHandler(this.gouraudButton_CheckedChanged);
+            // 
+            // constantButton
+            // 
+            this.constantButton.AutoSize = true;
+            this.constantButton.Location = new System.Drawing.Point(7, 23);
+            this.constantButton.Name = "constantButton";
+            this.constantButton.Size = new System.Drawing.Size(73, 19);
+            this.constantButton.TabIndex = 0;
+            this.constantButton.Text = "Constant";
+            this.constantButton.UseVisualStyleBackColor = true;
+            this.constantButton.CheckedChanged += new System.EventHandler(this.constantButton_CheckedChanged);
+            // 
             // ksLabel
             // 
             this.ksLabel.AutoSize = true;
-            this.ksLabel.Location = new System.Drawing.Point(137, 138);
+            this.ksLabel.Location = new System.Drawing.Point(137, 160);
             this.ksLabel.Name = "ksLabel";
             this.ksLabel.Size = new System.Drawing.Size(21, 15);
             this.ksLabel.TabIndex = 5;
@@ -122,7 +177,7 @@ namespace PresentationLayer.Views
             // kdLabel
             // 
             this.kdLabel.AutoSize = true;
-            this.kdLabel.Location = new System.Drawing.Point(137, 87);
+            this.kdLabel.Location = new System.Drawing.Point(137, 109);
             this.kdLabel.Name = "kdLabel";
             this.kdLabel.Size = new System.Drawing.Size(23, 15);
             this.kdLabel.TabIndex = 4;
@@ -132,10 +187,10 @@ namespace PresentationLayer.Views
             // 
             this.ksTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ksTrackBar.Location = new System.Drawing.Point(3, 108);
+            this.ksTrackBar.Location = new System.Drawing.Point(9, 130);
             this.ksTrackBar.Maximum = 100;
             this.ksTrackBar.Name = "ksTrackBar";
-            this.ksTrackBar.Size = new System.Drawing.Size(329, 45);
+            this.ksTrackBar.Size = new System.Drawing.Size(317, 45);
             this.ksTrackBar.TabIndex = 3;
             this.ksTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.ksTrackBar.Value = 50;
@@ -145,10 +200,10 @@ namespace PresentationLayer.Views
             // 
             this.kdTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.kdTrackBar.Location = new System.Drawing.Point(3, 57);
+            this.kdTrackBar.Location = new System.Drawing.Point(9, 79);
             this.kdTrackBar.Maximum = 100;
             this.kdTrackBar.Name = "kdTrackBar";
-            this.kdTrackBar.Size = new System.Drawing.Size(329, 45);
+            this.kdTrackBar.Size = new System.Drawing.Size(317, 45);
             this.kdTrackBar.TabIndex = 2;
             this.kdTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.kdTrackBar.Value = 50;
@@ -157,7 +212,7 @@ namespace PresentationLayer.Views
             // fovLabel
             // 
             this.fovLabel.AutoSize = true;
-            this.fovLabel.Location = new System.Drawing.Point(137, 31);
+            this.fovLabel.Location = new System.Drawing.Point(137, 53);
             this.fovLabel.Name = "fovLabel";
             this.fovLabel.Size = new System.Drawing.Size(32, 15);
             this.fovLabel.TabIndex = 1;
@@ -167,15 +222,24 @@ namespace PresentationLayer.Views
             // 
             this.fovBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.fovBar.Location = new System.Drawing.Point(3, 6);
+            this.fovBar.Location = new System.Drawing.Point(9, 28);
             this.fovBar.Maximum = 120;
             this.fovBar.Minimum = 30;
             this.fovBar.Name = "fovBar";
-            this.fovBar.Size = new System.Drawing.Size(329, 45);
+            this.fovBar.Size = new System.Drawing.Size(317, 45);
             this.fovBar.TabIndex = 0;
             this.fovBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.fovBar.Value = 50;
             this.fovBar.ValueChanged += new System.EventHandler(this.fovBar_ValueChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(329, 194);
+            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Illumination parameters";
             // 
             // MainView
             // 
@@ -194,6 +258,8 @@ namespace PresentationLayer.Views
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fovBar)).EndInit();
@@ -213,5 +279,10 @@ namespace PresentationLayer.Views
         private System.Windows.Forms.TrackBar kdTrackBar;
         private System.Windows.Forms.Label ksLabel;
         private System.Windows.Forms.Label kdLabel;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton phongButton;
+        private System.Windows.Forms.RadioButton gouraudButton;
+        private System.Windows.Forms.RadioButton constantButton;
     }
 }

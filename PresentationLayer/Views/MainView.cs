@@ -95,5 +95,20 @@ namespace PresentationLayer.Views
         {
             MessageBox.Show($"Pressed key {e.KeyChar}");
         }
+
+        private void gouraudButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.ShadingMode = DomainLayer.Enum.ShadingMode.Gouraud;
+        }
+
+        private void constantButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.ShadingMode = DomainLayer.Enum.ShadingMode.Constant;
+        }
+
+        private void phongButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.ShadingMode = DomainLayer.Enum.ShadingMode.Phong;
+        }
     }
 }

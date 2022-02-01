@@ -1,4 +1,5 @@
 ﻿using DomainLayer;
+using DomainLayer.Dto;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,9 +12,11 @@ namespace InfrastructureLayer.Services
     public class DrawingService
     {
         private readonly IlluminationService illuminationService;
-        public DrawingService(IlluminationService illuminationService)
+        private readonly DrawingParameters parameters;
+        public DrawingService(IlluminationService illuminationService, DrawingParameters drawingParameters)
         {
             this.illuminationService = illuminationService;
+            parameters = drawingParameters;
         }
         public void DrawContour(IFastBitmap bitmap, List<CanvasRectangle> rectangles, Color color, double [,] zbuffer)
         {
@@ -48,7 +51,16 @@ namespace InfrastructureLayer.Services
         }
         private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer, Matrix4x4 invertedMatrix, Camera camera)
         {
+            Color color = Color.White;
             var shape = triangle.Points.Select(point => ConvertToCanvas(point, bitmap.Width, bitmap.Height)).ToList();
+            if(parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Constant)
+            {
+                var point = triangle.Points[0];
+                var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
+                modelVector /= modelVector.W;
+                var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
+                color = illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera);
+            }
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
             List<(int y_max, double x, double m)> AET = new();
             int ymin = (int)P[0].Y;
@@ -102,6 +114,11 @@ namespace InfrastructureLayer.Services
                             else
                                 zbuffer[x, y] = z;
                         //}
+                        if (parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Constant)
+                        {
+                            bitmap.SetPixel(x, y, color);
+                            continue;
+                        }
                         var point = ConvertFromCanvas(new Vector3(x, y, z), bitmap.Width, bitmap.Height);
                         var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
                         modelVector /= modelVector.W;
