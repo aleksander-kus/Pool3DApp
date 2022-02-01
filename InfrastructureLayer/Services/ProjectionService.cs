@@ -43,15 +43,17 @@ namespace InfrastructureLayer.Services
         private void ProjectTable(IFastBitmap bitmap, double[,] zbuffer)
         {
             modelMatrix = Matrix4x4.Identity;
+            Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
             var projectedTriangles = scene.TableTriangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer);
+            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
         }
 
         private void ProjectCube(IFastBitmap bitmap, double[,] zbuffer)
         {
             modelMatrix = Matrix4x4.CreateTranslation(scene.Cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates);
+            Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
             var projectedTriangles = scene.Cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer);
+            drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
         }
 
         private void ProjectSpheres(IFastBitmap bitmap, double[,] zbuffer)
@@ -59,11 +61,11 @@ namespace InfrastructureLayer.Services
             foreach(var sphere in scene.Spheres)
             {
                 foreach (var triangle in sphere.Triangles)
-                    triangle.SphereCenter = ProjectPoint(sphere.Center);
+                    triangle.SphereCenter = sphere.Center;
                 modelMatrix = Matrix4x4.CreateTranslation(sphere.Center.Coordinates);
-                //sphere.Center = ProjectPoint(sphere.Center);
+                Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
                 var projectedTriangles = sphere.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
-                drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer);
+                drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
             }
         }
 
@@ -74,19 +76,32 @@ namespace InfrastructureLayer.Services
 
         private ModelPoint ProjectPoint(ModelPoint point)
         {
-            var vec = Vector4.Transform(Vector4.Transform(Vector4.Transform(point.Coordinates4, modelMatrix), viewMatrix), projectionMatrix);
+            //modelMatrix = Matrix4x4.Identity;
+            //Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
+            //point = new ModelPoint(1, 1, 1);
+            var vec = Vector4.Transform(point.Coordinates4, modelMatrix * viewMatrix * projectionMatrix);
             vec /= vec.W;
-            return ConvertToCanvas(vec);
+            //var point2 = ConvertToCanvas(new ModelPoint(vec.X, vec.Y, vec.Z), 801, 868);
+            //var point3 = ConvertFromCanvas(point2, 801, 868);
+            //var modelVector = Vector4.Transform(point3.Coordinates4, invmatrix);
+            //modelVector /= modelVector.W;
+            return new ModelPoint(vec.X, vec.Y, vec.Z);
         }
 
-        private ModelPoint ConvertToCanvas(Vector4 coords)
+        private Vector3 ConvertToCanvas(ModelPoint point, int width, int height)
         {
-            int x = (int)Math.Round(parameters.CanvasWidth / 2 * (coords.X + 1));
-            int y = (int)Math.Round(parameters.CanvasHeight / 2 * (-coords.Y + 1));
-            float z = coords.Z;
+            int x = (int)Math.Round(width / 2 * (point.X + 1));
+            int y = (int)Math.Round(height / 2 * (-point.Y + 1));
+            float z = point.Z;
+            return new Vector3(x, y, z);
+        }
+
+        private ModelPoint ConvertFromCanvas(Vector3 point, int width, int height)
+        {
+            float x = 2 * point.X / width - 1;
+            float y = -(2 * point.Y / height - 1);
+            float z = point.Z;
             return new ModelPoint(x, y, z);
         }
-
     }
-    
 }

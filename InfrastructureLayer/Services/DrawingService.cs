@@ -24,11 +24,11 @@ namespace InfrastructureLayer.Services
                 }
             }
         }
-        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer)
+        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer, Matrix4x4 invertedMatrix)
         {
             foreach(var triangle in triangles)
             {
-                ScanLineColoring(bitmap, triangle, zbuffer);
+                ScanLineColoring(bitmap, triangle, zbuffer, invertedMatrix);
             }
             //triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
             //Random random = new Random(seed);
@@ -44,9 +44,9 @@ namespace InfrastructureLayer.Services
             //    ScanLineColoring(bitmap, triangle, color, zbuffer);
             //}
         }
-        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer)
+        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer, Matrix4x4 invertedMatrix)
         {
-            var shape = triangle.Points.Select(point => point.Coordinates).ToList();
+            var shape = triangle.Points.Select(point => ConvertToCanvas(point, bitmap.Width, bitmap.Height)).ToList();
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
             List<(int y_max, double x, double m)> AET = new();
             int ymin = (int)P[0].Y;
@@ -96,7 +96,10 @@ namespace InfrastructureLayer.Services
                         if(z < zbuffer[x, y])
                         {
                             zbuffer[x,y] = z;
-                            bitmap.SetPixel(x, y, illuminationService.ComputeColor(Vector3.Zero, triangle.GetNormalVectorForPoint(new ModelPoint(x,y,z))));
+                            var point = ConvertFromCanvas(new Vector3(x, y, z), bitmap.Width, bitmap.Height);
+                            var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
+                            modelVector /= modelVector.W;
+                            bitmap.SetPixel(x, y, illuminationService.ComputeColor(Vector3.Zero, triangle.GetNormalVectorForPoint(new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z))));
                         }
                     }
                 }
@@ -107,6 +110,22 @@ namespace InfrastructureLayer.Services
                     AET[i] = (y_max, x + 1 / m, m);
                 }
             }
+        }
+
+        private Vector3 ConvertToCanvas(ModelPoint point, int width, int height)
+        {
+            int x = (int)Math.Round(width / 2 * (point.X + 1));
+            int y = (int)Math.Round(height / 2 * (-point.Y + 1));
+            float z = point.Z;
+            return new Vector3(x, y, z);
+        }
+
+        private ModelPoint ConvertFromCanvas(Vector3 point, int width, int height)
+        {
+            float x = 2 * point.X / width - 1;
+            float y = -(2 * point.Y / height - 1);
+            float z = point.Z;
+            return new ModelPoint(x, y, z);
         }
 
         /// <summary>

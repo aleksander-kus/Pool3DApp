@@ -17,8 +17,8 @@ namespace InfrastructureLayer.Services
         public float TableLength { get; set; } = 2;
         public float SideWidth { get; set; } = 0.1f;
         public float CubeLength { get; set; } = 0.05f;
-        public int CubeMeridians { get; set; } = 10;
-        public int CubeParallels { get; set; } = 10;
+        public int CubeMeridians { get; set; } = 20;
+        public int CubeParallels { get; set; } = 20;
         public float SphereRadius { get; set; } = 0.1f;
 
         public Scene GetScene()

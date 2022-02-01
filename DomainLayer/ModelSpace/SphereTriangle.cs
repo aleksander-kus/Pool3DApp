@@ -13,7 +13,7 @@ namespace DomainLayer.ModelSpace
         }
         public override Vector3 GetNormalVectorForPoint(ModelPoint point)
         {
-            var color = Vector3.Normalize(point.Coordinates - SphereCenter.Coordinates);
+            var color = Vector3.Normalize(point.Coordinates);
             return color;
         }
 
