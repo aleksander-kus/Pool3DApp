@@ -33,6 +33,10 @@ namespace PresentationLayer.Views
             this.canvasBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.topCameraButton = new System.Windows.Forms.RadioButton();
+            this.followingCameraButton = new System.Windows.Forms.RadioButton();
+            this.staticCameraButton = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.phongButton = new System.Windows.Forms.RadioButton();
             this.gouraudButton = new System.Windows.Forms.RadioButton();
@@ -44,14 +48,19 @@ namespace PresentationLayer.Views
             this.fovLabel = new System.Windows.Forms.Label();
             this.fovBar = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.kaTrackbar = new System.Windows.Forms.TrackBar();
+            this.kaLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fovBar)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.kaTrackbar)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -105,6 +114,7 @@ namespace PresentationLayer.Views
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.ksLabel);
             this.panel1.Controls.Add(this.kdLabel);
@@ -118,12 +128,59 @@ namespace PresentationLayer.Views
             this.panel1.Size = new System.Drawing.Size(335, 428);
             this.panel1.TabIndex = 0;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.topCameraButton);
+            this.groupBox3.Controls.Add(this.followingCameraButton);
+            this.groupBox3.Controls.Add(this.staticCameraButton);
+            this.groupBox3.Location = new System.Drawing.Point(188, 252);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(144, 105);
+            this.groupBox3.TabIndex = 8;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Cameras";
+            // 
+            // topCameraButton
+            // 
+            this.topCameraButton.AutoSize = true;
+            this.topCameraButton.Location = new System.Drawing.Point(6, 75);
+            this.topCameraButton.Name = "topCameraButton";
+            this.topCameraButton.Size = new System.Drawing.Size(105, 19);
+            this.topCameraButton.TabIndex = 2;
+            this.topCameraButton.Text = "On top of cube";
+            this.topCameraButton.UseVisualStyleBackColor = true;
+            this.topCameraButton.CheckedChanged += new System.EventHandler(this.topCameraButton_CheckedChanged);
+            // 
+            // followingCameraButton
+            // 
+            this.followingCameraButton.AutoSize = true;
+            this.followingCameraButton.Location = new System.Drawing.Point(6, 49);
+            this.followingCameraButton.Name = "followingCameraButton";
+            this.followingCameraButton.Size = new System.Drawing.Size(136, 19);
+            this.followingCameraButton.TabIndex = 1;
+            this.followingCameraButton.Text = "Static following cube";
+            this.followingCameraButton.UseVisualStyleBackColor = true;
+            this.followingCameraButton.CheckedChanged += new System.EventHandler(this.followingCameraButton_CheckedChanged);
+            // 
+            // staticCameraButton
+            // 
+            this.staticCameraButton.AutoSize = true;
+            this.staticCameraButton.Checked = true;
+            this.staticCameraButton.Location = new System.Drawing.Point(7, 23);
+            this.staticCameraButton.Name = "staticCameraButton";
+            this.staticCameraButton.Size = new System.Drawing.Size(54, 19);
+            this.staticCameraButton.TabIndex = 0;
+            this.staticCameraButton.TabStop = true;
+            this.staticCameraButton.Text = "Static";
+            this.staticCameraButton.UseVisualStyleBackColor = true;
+            this.staticCameraButton.CheckedChanged += new System.EventHandler(this.staticCameraButton_CheckedChanged);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.phongButton);
             this.groupBox2.Controls.Add(this.gouraudButton);
             this.groupBox2.Controls.Add(this.constantButton);
-            this.groupBox2.Location = new System.Drawing.Point(3, 203);
+            this.groupBox2.Location = new System.Drawing.Point(3, 252);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(111, 105);
             this.groupBox2.TabIndex = 7;
@@ -234,12 +291,36 @@ namespace PresentationLayer.Views
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.kaLabel);
+            this.groupBox1.Controls.Add(this.kaTrackbar);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(329, 194);
+            this.groupBox1.Size = new System.Drawing.Size(329, 231);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Illumination parameters";
+            // 
+            // kaTrackbar
+            // 
+            this.kaTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.kaTrackbar.Location = new System.Drawing.Point(6, 183);
+            this.kaTrackbar.Maximum = 100;
+            this.kaTrackbar.Name = "kaTrackbar";
+            this.kaTrackbar.Size = new System.Drawing.Size(317, 45);
+            this.kaTrackbar.TabIndex = 9;
+            this.kaTrackbar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.kaTrackbar.Value = 50;
+            this.kaTrackbar.ValueChanged += new System.EventHandler(this.kaTrackbar_ValueChanged);
+            // 
+            // kaLabel
+            // 
+            this.kaLabel.AutoSize = true;
+            this.kaLabel.Location = new System.Drawing.Point(134, 213);
+            this.kaLabel.Name = "kaLabel";
+            this.kaLabel.Size = new System.Drawing.Size(21, 15);
+            this.kaLabel.TabIndex = 10;
+            this.kaLabel.Text = "ks:";
             // 
             // MainView
             // 
@@ -250,19 +331,22 @@ namespace PresentationLayer.Views
             this.Name = "MainView";
             this.Text = "MainView";
             this.Load += new System.EventHandler(this.MainView_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyDown);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainView_KeyPress);
             this.Resize += new System.EventHandler(this.MainView_Resize);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fovBar)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.kaTrackbar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -284,5 +368,11 @@ namespace PresentationLayer.Views
         private System.Windows.Forms.RadioButton phongButton;
         private System.Windows.Forms.RadioButton gouraudButton;
         private System.Windows.Forms.RadioButton constantButton;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton topCameraButton;
+        private System.Windows.Forms.RadioButton followingCameraButton;
+        private System.Windows.Forms.RadioButton staticCameraButton;
+        private System.Windows.Forms.Label kaLabel;
+        private System.Windows.Forms.TrackBar kaTrackbar;
     }
 }

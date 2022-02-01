@@ -53,6 +53,15 @@ namespace PresentationLayer.Presenters
             }
         }
 
+        public int Ka
+        {
+            set
+            {
+                illuminationParameters.Ka = value / 100f;
+                Update();
+            }
+        }
+
         public ShadingMode ShadingMode
         {
             set
@@ -104,9 +113,9 @@ namespace PresentationLayer.Presenters
             scene.Cube.Rotation += angle;
         }
 
-        public void SwitchCamera()
+        public void SwitchCamera(int id)
         {
-            activeCameraId = (activeCameraId + 1) % cameras.Count;
+            activeCameraId = id;
             projectionParameters.Camera = cameras[activeCameraId];
             Update();
         }

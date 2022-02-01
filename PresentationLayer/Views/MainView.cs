@@ -60,40 +60,10 @@ namespace PresentationLayer.Views
             ksLabel.Text = $"Ks: {ksTrackBar.Value/100f}";
         }
 
-        private void MainView_KeyDown(object sender, KeyEventArgs e)
+        private void kaTrackbar_ValueChanged(object sender, System.EventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.W:
-                    presenter.MoveCube(x: -0.02f);
-                    break;
-                case Keys.D:
-                    presenter.MoveCube(y: 0.02f);
-                    break;
-                case Keys.S:
-                    presenter.MoveCube(x: 0.02f);
-                    break;
-                case Keys.A:
-                    presenter.MoveCube(y: -0.02f);
-                    break;
-                case Keys.E:
-                    presenter.MoveCube(angle: -5);
-                    break;
-                case Keys.Q:
-                    presenter.MoveCube(angle: 5);
-                    break;
-                case Keys.C:
-                    presenter.SwitchCamera();
-                    break;
-                default:
-                    return;
-            }
-            presenter.Update();
-        }
-
-        private void MainView_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            MessageBox.Show($"Pressed key {e.KeyChar}");
+            presenter.Ka = kaTrackbar.Value;
+            kaLabel.Text = $"Ka: {kaTrackbar.Value / 100f}";
         }
 
         private void gouraudButton_CheckedChanged(object sender, System.EventArgs e)
@@ -109,6 +79,21 @@ namespace PresentationLayer.Views
         private void phongButton_CheckedChanged(object sender, System.EventArgs e)
         {
             presenter.ShadingMode = DomainLayer.Enum.ShadingMode.Phong;
+        }
+
+        private void staticCameraButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.SwitchCamera(0);
+        }
+
+        private void followingCameraButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.SwitchCamera(1);
+        }
+
+        private void topCameraButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.SwitchCamera(2);
         }
     }
 }
