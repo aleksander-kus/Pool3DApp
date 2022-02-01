@@ -14,7 +14,7 @@ namespace InfrastructureLayer.Services
         private readonly DrawingService drawingService;
         private readonly Scene scene;
         private readonly ProjectionParameters parameters;
-        private Matrix4x4 modelMatrix;
+        private Matrix4x4 modelMatrix = Matrix4x4.Identity;
         private Matrix4x4 viewMatrix;
         private Matrix4x4 projectionMatrix;
 
@@ -50,8 +50,8 @@ namespace InfrastructureLayer.Services
 
         private void ProjectCube(IFastBitmap bitmap, double[,] zbuffer)
         {
-            modelMatrix = Matrix4x4.CreateTranslation(scene.Cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates);
             Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
+            modelMatrix = Matrix4x4.CreateTranslation(scene.Cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates);
             var projectedTriangles = scene.Cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
             drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer, invmatrix);
         }
@@ -60,8 +60,6 @@ namespace InfrastructureLayer.Services
         {
             foreach(var sphere in scene.Spheres)
             {
-                foreach (var triangle in sphere.Triangles)
-                    triangle.SphereCenter = sphere.Center;
                 modelMatrix = Matrix4x4.CreateTranslation(sphere.Center.Coordinates);
                 Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
                 var projectedTriangles = sphere.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
@@ -76,15 +74,8 @@ namespace InfrastructureLayer.Services
 
         private ModelPoint ProjectPoint(ModelPoint point)
         {
-            //modelMatrix = Matrix4x4.Identity;
-            //Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
-            //point = new ModelPoint(1, 1, 1);
             var vec = Vector4.Transform(point.Coordinates4, modelMatrix * viewMatrix * projectionMatrix);
             vec /= vec.W;
-            //var point2 = ConvertToCanvas(new ModelPoint(vec.X, vec.Y, vec.Z), 801, 868);
-            //var point3 = ConvertFromCanvas(point2, 801, 868);
-            //var modelVector = Vector4.Transform(point3.Coordinates4, invmatrix);
-            //modelVector /= modelVector.W;
             return new ModelPoint(vec.X, vec.Y, vec.Z);
         }
 

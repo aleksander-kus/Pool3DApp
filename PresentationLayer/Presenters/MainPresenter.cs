@@ -1,5 +1,6 @@
 ﻿using DomainLayer;
 using DomainLayer.Cameras;
+using DomainLayer.Dto;
 using InfrastructureLayer;
 using InfrastructureLayer.Services;
 using PresentationLayer.ViewLoaders;
@@ -22,6 +23,7 @@ namespace PresentationLayer.Presenters
         private readonly ProjectionService projectionService;
         private readonly IlluminationService illuminationService;
         private readonly ProjectionParameters projectionParameters;
+        private readonly IlluminationParameters illuminationParameters;
         private const int n = 1;
         private const float f = 1.1f;
         public int Fov
@@ -42,7 +44,8 @@ namespace PresentationLayer.Presenters
             this.view = view;
             this.viewLoader = viewLoader;
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
-            illuminationService = new();
+            illuminationParameters = new();
+            illuminationService = new(illuminationParameters);
             drawingService = new DrawingService(illuminationService);
             sceneService = new SceneService();
             scene = sceneService.GetScene();
@@ -80,7 +83,7 @@ namespace PresentationLayer.Presenters
         public void Update()
         {
             using Graphics g1 = Graphics.FromImage(bitmap);
-            g1.Clear(Color.White);
+            g1.Clear(Color.Black);
             
             //Camera activeCamera = cameras[activeCameraId];
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);

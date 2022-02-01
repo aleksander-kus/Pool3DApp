@@ -99,7 +99,8 @@ namespace InfrastructureLayer.Services
                             var point = ConvertFromCanvas(new Vector3(x, y, z), bitmap.Width, bitmap.Height);
                             var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
                             modelVector /= modelVector.W;
-                            bitmap.SetPixel(x, y, illuminationService.ComputeColor(Vector3.Zero, triangle.GetNormalVectorForPoint(new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z))));
+                            var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
+                            bitmap.SetPixel(x, y, illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color));
                         }
                     }
                 }

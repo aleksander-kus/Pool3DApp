@@ -158,7 +158,7 @@ namespace InfrastructureLayer.Services
                 sphere.Add((vertices[vertices.Count - 1], vertices[a], vertices[b], col));
             }
 
-            return sphere.Select(triangle => new SphereTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col, new ModelPoint(0,0,0))).ToList();
+            return sphere.Select(triangle => new SphereTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col)).ToList();
         }
     }
 }

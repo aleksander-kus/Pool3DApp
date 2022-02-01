@@ -2,11 +2,13 @@
 
 namespace DomainLayer.Dto
 {
-    class IlluminationParameters
+    public class IlluminationParameters
     {
-        public float Ka { get; set; }
-        public float Kd { get; set; }
-        public float Ks { get; set; }
+        public float Ka { get; set; } = 0.4f;
+        public float Kd { get; set; } = 0.5f;
+        public float Ks { get; set; } = 0.5f;
+        public int N { get; set; } = 50;
+        public ModelPoint MainLightPosition { get; set; } = new ModelPoint(0.5f, 1, 1);
         public LightSources LightSources { get; set; }
     }
 }
