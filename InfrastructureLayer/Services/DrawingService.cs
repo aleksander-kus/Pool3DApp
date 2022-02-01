@@ -32,31 +32,13 @@ namespace InfrastructureLayer.Services
             var shape = triangle.Points.Select(point => ConvertToCanvas(point, bitmap.Width, bitmap.Height)).ToList();
             if(parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Constant)
             {
-                var point = triangle.Points[0].Coordinates; //(triangle.Points[0].Coordinates + triangle.Points[1].Coordinates + triangle.Points[2].Coordinates) / 3;
-                var modelVector = Vector4.Transform(point, invertedMatrix);
-                modelVector /= modelVector.W;
-                var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
-                color1 = illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera).From255();
+                color1 = ComputePointColor(triangle.Points[0].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
             }
             else if (parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Gouraud)
             {
-                var point = triangle.Points[0].Coordinates; //(triangle.Points[0].Coordinates + triangle.Points[1].Coordinates + triangle.Points[2].Coordinates) / 3;
-                var modelVector = Vector4.Transform(point, invertedMatrix);
-                modelVector /= modelVector.W;
-                var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
-                color1 = illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera).From255();
-
-                point = triangle.Points[1].Coordinates; //(triangle.Points[0].Coordinates + triangle.Points[1].Coordinates + triangle.Points[2].Coordinates) / 3;
-                modelVector = Vector4.Transform(point, invertedMatrix);
-                modelVector /= modelVector.W;
-                modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
-                color2 = illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera).From255();
-
-                point = triangle.Points[2].Coordinates; //(triangle.Points[0].Coordinates + triangle.Points[1].Coordinates + triangle.Points[2].Coordinates) / 3;
-                modelVector = Vector4.Transform(point, invertedMatrix);
-                modelVector /= modelVector.W;
-                modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
-                color3 = illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera).From255();
+                color1 = ComputePointColor(triangle.Points[0].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+                color2 = ComputePointColor(triangle.Points[1].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+                color3 = ComputePointColor(triangle.Points[2].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
             }
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
             List<(int y_max, double x, double m)> AET = new();
@@ -126,7 +108,7 @@ namespace InfrastructureLayer.Services
                             var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
                             modelVector /= modelVector.W;
                             var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
-                            color = illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera);
+                            color = ComputePointColor(new Vector3(x, y, z), bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera);
                         }
 
                         bitmap.SetPixel(x, y, color);
@@ -139,6 +121,21 @@ namespace InfrastructureLayer.Services
                     AET[i] = (y_max, x + 1 / m, m);
                 }
             }
+        }
+
+        private Color ComputePointColor(Vector3 point, int width, int height, Matrix4x4 invertedMatrix, ModelTriangle triangle, Camera camera, bool convert = true)
+        {
+            Vector4 modelVector = Vector4.Zero;
+            if (convert)
+            {
+                var convertedPoint = ConvertFromCanvas(point, width, height);
+                modelVector = Vector4.Transform(convertedPoint.Coordinates4, invertedMatrix);
+            }
+            else
+                modelVector = Vector4.Transform(point, invertedMatrix);
+            modelVector /= modelVector.W;
+            var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
+            return illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera);
         }
 
         private Vector3 ConvertToCanvas(ModelPoint point, int width, int height)
