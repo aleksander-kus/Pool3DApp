@@ -32,7 +32,7 @@ namespace InfrastructureLayer.Services
             var shape = triangle.Points.Select(point => ConvertToCanvas(point, bitmap.Width, bitmap.Height)).ToList();
             if(parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Constant)
             {
-                color1 = ComputePointColor(triangle.Points[0].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+                color1 = ComputePointColor((triangle.Points[0].Coordinates + triangle.Points[1].Coordinates + triangle.Points[2].Coordinates) / 3, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
             }
             else if (parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Gouraud)
             {

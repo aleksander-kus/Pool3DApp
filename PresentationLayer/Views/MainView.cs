@@ -34,6 +34,7 @@ namespace PresentationLayer.Views
             fovBar_ValueChanged(null, null);
             kdTrackBar_ValueChanged(null, null);
             ksTrackBar_ValueChanged(null, null);
+            kaTrackbar_ValueChanged(null, null);
             timer.Start();
         }
 

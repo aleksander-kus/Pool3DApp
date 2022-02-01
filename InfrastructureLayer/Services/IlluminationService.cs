@@ -46,7 +46,7 @@ namespace InfrastructureLayer.Services
             //normalVector += Vector3.One;
             //normalVector *= 1 / 2f;
             //normalVector = Vector3.Normalize(normalVector);
-
+            baseColor = baseColor * 1/ Vector3.Distance(camera.Position.Coordinates, point);
             return baseColor.To255();
         }
 
