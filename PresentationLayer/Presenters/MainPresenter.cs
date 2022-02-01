@@ -117,7 +117,7 @@ namespace PresentationLayer.Presenters
             g1.Clear(Color.Black);
             scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
             if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
-            //scene.Cube.Rotation += 10;
+            scene.Cube.Rotation += 10;
             //Camera activeCamera = cameras[activeCameraId];
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
 
