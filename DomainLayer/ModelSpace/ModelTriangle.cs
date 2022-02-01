@@ -16,5 +16,7 @@ namespace DomainLayer
         }
 
         public abstract Vector3 GetNormalVectorForPoint(ModelPoint point);
+
+        public abstract ModelTriangle NewFromPoints(List<ModelPoint> points);
     }
 }

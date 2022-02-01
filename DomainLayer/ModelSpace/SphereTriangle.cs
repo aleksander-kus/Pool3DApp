@@ -15,5 +15,10 @@ namespace DomainLayer.ModelSpace
         {
             return Vector3.Normalize(point.Coordinates - sphereCenter.Coordinates);
         }
+
+        public override ModelTriangle NewFromPoints(List<ModelPoint> points)
+        {
+            return new SphereTriangle(points, Color, sphereCenter);
+        }
     }
 }

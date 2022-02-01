@@ -1,4 +1,5 @@
 ﻿using DomainLayer;
+using DomainLayer.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,9 +64,9 @@ namespace InfrastructureLayer.Services
             }
         }
 
-        private CanvasTriangle ProjectTriangle(ModelTriangle triangle)
+        private ModelTriangle ProjectTriangle(ModelTriangle triangle)
         {
-            return new CanvasTriangle(triangle.Points.Select(point => ProjectPoint(point)).ToList(), triangle.Color);
+            return triangle.NewFromPoints(triangle.Points.Select(point => ProjectPoint(point)).ToList());
         }
 
         private ModelPoint ProjectPoint(ModelPoint point)

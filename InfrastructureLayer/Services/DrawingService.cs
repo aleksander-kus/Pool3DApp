@@ -24,9 +24,13 @@ namespace InfrastructureLayer.Services
                 }
             }
         }
-        public void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangles, double[,] zbuffer)
+        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer)
         {
-            triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
+            foreach(var triangle in triangles)
+            {
+                ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer);
+            }
+            //triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
             //Random random = new Random(seed);
             //for(int i = 0; i < triangels.Count; i += 2)
             //{
@@ -40,7 +44,7 @@ namespace InfrastructureLayer.Services
             //    ScanLineColoring(bitmap, triangle, color, zbuffer);
             //}
         }
-        private void ScanLineColoring(IFastBitmap bitmap, CanvasTriangle triangle, Color color, double[,] zbuffer)
+        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, Color color, double[,] zbuffer)
         {
             var shape = triangle.Points.Select(point => point.Coordinates).ToList();
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();

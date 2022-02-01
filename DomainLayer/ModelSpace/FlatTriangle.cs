@@ -15,5 +15,10 @@ namespace DomainLayer.ModelSpace
         {
             return normalVector;
         }
+
+        public override ModelTriangle NewFromPoints(List<ModelPoint> points)
+        {
+            return new FlatTriangle(points, Color, normalVector);
+        }
     }
 }
