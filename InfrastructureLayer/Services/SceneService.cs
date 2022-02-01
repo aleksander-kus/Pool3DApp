@@ -1,4 +1,5 @@
 ﻿using DomainLayer;
+using DomainLayer.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,9 +17,9 @@ namespace InfrastructureLayer.Services
         public float TableLength { get; set; } = 2;
         public float SideWidth { get; set; } = 0.1f;
         public float CubeLength { get; set; } = 0.05f;
-        public const int CubeMeridians = 20;
-        public const int CubeParallels = 20;
-        public float SphereRadius = 0.07f;
+        public int CubeMeridians { get; set; } = 20;
+        public int CubeParallels { get; set; } = 20;
+        public float SphereRadius { get; set; } = 0.07f;
 
         public Scene GetScene()
         {
@@ -27,7 +28,7 @@ namespace InfrastructureLayer.Services
                 TableTriangles = GenerateTableTriangles(),
                 Cube = new MovingCube()
                 {
-                    Triangles = GetCube(),
+                    Triangles = GenerateCube(),
                     Center = new ModelPoint(TableWidth / 2, TableLength / 2, TableHeight / 2),
                     Rotation = 0
                 },
@@ -62,36 +63,36 @@ namespace InfrastructureLayer.Services
             List<ModelTriangle> triangles = new();
             List<ModelRectangle> rectangles = new()
             {
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, TableLength, 0), new ModelPoint(TableWidth, TableLength, 0), new ModelPoint(TableWidth, 0, 0) }, Color.Green),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, 0, TableHeight), new ModelPoint(0, TableLength, TableHeight), new ModelPoint(0, TableLength, 0) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, TableLength, 0), new ModelPoint(0, TableLength, TableHeight), new ModelPoint(TableWidth, TableLength, TableHeight), new ModelPoint(TableWidth, TableLength, 0) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth, 0, 0), new ModelPoint(TableWidth, 0, TableHeight), new ModelPoint(TableWidth, TableLength, TableHeight), new ModelPoint(TableWidth, TableLength, 0) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, 0, TableHeight), new ModelPoint(TableWidth, 0, TableHeight), new ModelPoint(TableWidth, 0, 0) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, 0), new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, 0) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, 0), new ModelPoint(-SideWidth, -SideWidth, 0), new ModelPoint(-SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, 0, TableHeight), new ModelPoint(-SideWidth, 0, TableHeight), new ModelPoint(-SideWidth, -SideWidth, TableHeight) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-SideWidth, -SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(-SideWidth, -SideWidth, TableHeight) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, -SideWidth, TableHeight), new ModelPoint(0, TableLength + SideWidth, TableHeight), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(-SideWidth, -SideWidth, TableHeight) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight) }, Color.Brown),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength, TableHeight), new ModelPoint(-SideWidth, TableLength, TableHeight), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight) }, Color.Brown),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, TableLength, 0), new ModelPoint(TableWidth, TableLength, 0), new ModelPoint(TableWidth, 0, 0) }, Color.Green, new Vector3(0, 0, 1)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, 0, TableHeight), new ModelPoint(0, TableLength, TableHeight), new ModelPoint(0, TableLength, 0) }, Color.Brown, new Vector3(1,0,0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, TableLength, 0), new ModelPoint(0, TableLength, TableHeight), new ModelPoint(TableWidth, TableLength, TableHeight), new ModelPoint(TableWidth, TableLength, 0) }, Color.Brown, new Vector3(0, -1, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth, 0, 0), new ModelPoint(TableWidth, 0, TableHeight), new ModelPoint(TableWidth, TableLength, TableHeight), new ModelPoint(TableWidth, TableLength, 0) }, Color.Brown, new Vector3(-1, 0 ,0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, 0, TableHeight), new ModelPoint(TableWidth, 0, TableHeight), new ModelPoint(TableWidth, 0, 0) }, Color.Brown, new Vector3(0, 1, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, 0), new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, 0) }, Color.Brown, new Vector3(1, 0, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight) }, Color.Brown, new Vector3(0,0,1)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, 0), new ModelPoint(-SideWidth, -SideWidth, 0), new ModelPoint(-SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight) }, Color.Brown, new Vector3(0, -1, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, -SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, 0, TableHeight), new ModelPoint(-SideWidth, 0, TableHeight), new ModelPoint(-SideWidth, -SideWidth, TableHeight) }, Color.Brown, new Vector3(0,0,1)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-SideWidth, -SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(-SideWidth, -SideWidth, TableHeight) }, Color.Brown, new Vector3(-1,0,0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, -SideWidth, TableHeight), new ModelPoint(0, TableLength + SideWidth, TableHeight), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(-SideWidth, -SideWidth, TableHeight) }, Color.Brown, new Vector3(0,0,1)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, 0), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight) }, Color.Brown, new Vector3(0, 1, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(TableWidth + SideWidth, TableLength + SideWidth, TableHeight), new ModelPoint(TableWidth + SideWidth, TableLength, TableHeight), new ModelPoint(-SideWidth, TableLength, TableHeight), new ModelPoint(-SideWidth, TableLength + SideWidth, TableHeight) }, Color.Brown, new Vector3(0,0,1))
             };
             rectangles.ForEach(rectangle => triangles.AddRange(rectangle.Split()));
             return triangles;
         }
 
-        private List<ModelTriangle> GetCube()
+        private List<ModelTriangle> GenerateCube()
         {
             float a = CubeLength / 2;
             List<ModelTriangle> triangles = new();
             List<ModelRectangle> rectangles = new()
             {
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, 0), new ModelPoint(-a, a, 0), new ModelPoint(a, a, 0), new ModelPoint(a, -a, 0) }, Color.Blue),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, a), new ModelPoint(-a, a, a), new ModelPoint(a, a, a), new ModelPoint(a, -a, a) }, Color.Blue),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, 0), new ModelPoint(-a, a, 0), new ModelPoint(-a, a, a), new ModelPoint(-a, -a, a) }, Color.Blue),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(a, -a, 0), new ModelPoint(a, a, 0), new ModelPoint(a, a, a), new ModelPoint(a, -a, a) }, Color.Blue),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(a, -a, 0), new ModelPoint(a, -a, a), new ModelPoint(-a, -a, a), new ModelPoint(-a, -a, 0) }, Color.Blue),
-                new ModelRectangle(new List<ModelPoint> { new ModelPoint(a, a, 0), new ModelPoint(a, a, a), new ModelPoint(-a, a, a), new ModelPoint(-a, a, 0) }, Color.Blue),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, 0), new ModelPoint(-a, a, 0), new ModelPoint(a, a, 0), new ModelPoint(a, -a, 0) }, Color.Blue, new Vector3(0,0, -1)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, a), new ModelPoint(-a, a, a), new ModelPoint(a, a, a), new ModelPoint(a, -a, a) }, Color.Blue, new Vector3(0,0,1)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, 0), new ModelPoint(-a, a, 0), new ModelPoint(-a, a, a), new ModelPoint(-a, -a, a) }, Color.Blue, new Vector3(-1, 0, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(a, -a, 0), new ModelPoint(a, a, 0), new ModelPoint(a, a, a), new ModelPoint(a, -a, a) }, Color.Blue, new Vector3(1, 0, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(a, -a, 0), new ModelPoint(a, -a, a), new ModelPoint(-a, -a, a), new ModelPoint(-a, -a, 0) }, Color.Blue, new Vector3(0, -1, 0)),
+                new ModelRectangle(new List<ModelPoint> { new ModelPoint(a, a, 0), new ModelPoint(a, a, a), new ModelPoint(-a, a, a), new ModelPoint(-a, a, 0) }, Color.Blue, new Vector3(0, 1, 0)),
 
             };
             rectangles.ForEach(rectangle => triangles.AddRange(rectangle.Split()));
@@ -157,7 +158,7 @@ namespace InfrastructureLayer.Services
                 sphere.Add((vertices[vertices.Count - 1], vertices[a], vertices[b], col));
             }
 
-            return sphere.Select(triangle => new ModelTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col)).ToList();
+            return sphere.Select(triangle => (ModelTriangle)new SphereTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col, new ModelPoint(0,0,0))).ToList();
         }
     }
 }

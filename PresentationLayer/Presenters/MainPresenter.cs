@@ -20,6 +20,7 @@ namespace PresentationLayer.Presenters
         private readonly DrawingService drawingService;
         private readonly SceneService sceneService;
         private readonly ProjectionService projectionService;
+        private readonly IlluminationService illuminationService;
         private readonly ProjectionParameters projectionParameters;
         private const int n = 1;
         private const float f = 1.1f;
@@ -41,7 +42,8 @@ namespace PresentationLayer.Presenters
             this.view = view;
             this.viewLoader = viewLoader;
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
-            drawingService = new DrawingService();
+            illuminationService = new();
+            drawingService = new DrawingService(illuminationService);
             sceneService = new SceneService();
             scene = sceneService.GetScene();
 
@@ -92,6 +94,8 @@ namespace PresentationLayer.Presenters
         public void LoadCanvasDimensions()
         {
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
+            projectionParameters.CanvasHeight = view.CanvasHeight;
+            projectionParameters.CanvasWidth = view.CanvasWidth;
             view.CanvasImage = bitmap;
             Update();
         }
