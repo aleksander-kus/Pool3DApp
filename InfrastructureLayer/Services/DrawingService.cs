@@ -28,7 +28,7 @@ namespace InfrastructureLayer.Services
         {
             foreach(var triangle in triangles)
             {
-                ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer);
+                ScanLineColoring(bitmap, triangle, zbuffer);
             }
             //triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
             //Random random = new Random(seed);
@@ -44,7 +44,7 @@ namespace InfrastructureLayer.Services
             //    ScanLineColoring(bitmap, triangle, color, zbuffer);
             //}
         }
-        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, Color color, double[,] zbuffer)
+        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer)
         {
             var shape = triangle.Points.Select(point => point.Coordinates).ToList();
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
@@ -92,11 +92,11 @@ namespace InfrastructureLayer.Services
                     {
                         if (x < 0 || x >= bitmap.Width || y < 0 || y >= bitmap.Height)
                             continue;
-                        double z = GetZ(x, y, shape[0], shape[1], shape[2]);
+                        float z = GetZ(x, y, shape[0], shape[1], shape[2]);
                         if(z < zbuffer[x, y])
                         {
                             zbuffer[x,y] = z;
-                            bitmap.SetPixel(x, y, color);
+                            bitmap.SetPixel(x, y, illuminationService.ComputeColor(Vector3.Zero, triangle.GetNormalVectorForPoint(new ModelPoint(x,y,z))));
                         }
                     }
                 }

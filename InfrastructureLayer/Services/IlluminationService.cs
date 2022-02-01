@@ -33,6 +33,10 @@ namespace InfrastructureLayer.Services
             //var ret = CalculateColorFromLight(reflector1.position, reflector1.color, point, N, I_O, parameters) +
             //    CalculateColorFromLight(reflector2.position, reflector2.color, point, N, I_O, parameters) + CalculateColorFromLight(reflector3.position, reflector3.color, point, N, I_O, parameters)
             //    + actualColor1 + actualColor2;
+            normalVector += Vector3.One;
+            normalVector *= 1 / 2f;
+            normalVector = Vector3.Normalize(normalVector);
+
             return normalVector.To255();
         }
     }

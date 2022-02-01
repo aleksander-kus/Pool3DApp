@@ -6,19 +6,20 @@ namespace DomainLayer.ModelSpace
 {
     public class SphereTriangle : ModelTriangle
     {
-        private readonly ModelPoint sphereCenter;
+        public ModelPoint SphereCenter { get; set; }
         public SphereTriangle(List<ModelPoint> points, Color color, ModelPoint sphereCenter): base(points, color)
         {
-            this.sphereCenter = sphereCenter;
+            SphereCenter = sphereCenter;
         }
         public override Vector3 GetNormalVectorForPoint(ModelPoint point)
         {
-            return Vector3.Normalize(point.Coordinates - sphereCenter.Coordinates);
+            var color = Vector3.Normalize(point.Coordinates - SphereCenter.Coordinates);
+            return color;
         }
 
         public override ModelTriangle NewFromPoints(List<ModelPoint> points)
         {
-            return new SphereTriangle(points, Color, sphereCenter);
+            return new SphereTriangle(points, Color, SphereCenter);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace DomainLayer
 
         public ModelPoint this[int index] => Points[index];
 
-        public ModelTriangle[] Split() => new ModelTriangle[] {new FlatTriangle(new List<ModelPoint> { Points[0], Points[1], Points[2] }, Color, normalVector),
+        public FlatTriangle[] Split() => new FlatTriangle[] {new FlatTriangle(new List<ModelPoint> { Points[0], Points[1], Points[2] }, Color, normalVector),
                                         new FlatTriangle(new List<ModelPoint> { Points[2], Points[3], Points[0] }, Color, normalVector)};
     }
 }

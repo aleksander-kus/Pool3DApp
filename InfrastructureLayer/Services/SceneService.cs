@@ -17,9 +17,9 @@ namespace InfrastructureLayer.Services
         public float TableLength { get; set; } = 2;
         public float SideWidth { get; set; } = 0.1f;
         public float CubeLength { get; set; } = 0.05f;
-        public int CubeMeridians { get; set; } = 20;
-        public int CubeParallels { get; set; } = 20;
-        public float SphereRadius { get; set; } = 0.07f;
+        public int CubeMeridians { get; set; } = 10;
+        public int CubeParallels { get; set; } = 10;
+        public float SphereRadius { get; set; } = 0.1f;
 
         public Scene GetScene()
         {
@@ -58,9 +58,9 @@ namespace InfrastructureLayer.Services
             };
         }
 
-        private List<ModelTriangle> GenerateTableTriangles()
+        private List<FlatTriangle> GenerateTableTriangles()
         {
-            List<ModelTriangle> triangles = new();
+            List<FlatTriangle> triangles = new();
             List<ModelRectangle> rectangles = new()
             {
                 new ModelRectangle(new List<ModelPoint> { new ModelPoint(0, 0, 0), new ModelPoint(0, TableLength, 0), new ModelPoint(TableWidth, TableLength, 0), new ModelPoint(TableWidth, 0, 0) }, Color.Green, new Vector3(0, 0, 1)),
@@ -81,10 +81,10 @@ namespace InfrastructureLayer.Services
             return triangles;
         }
 
-        private List<ModelTriangle> GenerateCube()
+        private List<FlatTriangle> GenerateCube()
         {
             float a = CubeLength / 2;
-            List<ModelTriangle> triangles = new();
+            List<FlatTriangle> triangles = new();
             List<ModelRectangle> rectangles = new()
             {
                 new ModelRectangle(new List<ModelPoint> { new ModelPoint(-a, -a, 0), new ModelPoint(-a, a, 0), new ModelPoint(a, a, 0), new ModelPoint(a, -a, 0) }, Color.Blue, new Vector3(0,0, -1)),
@@ -99,7 +99,7 @@ namespace InfrastructureLayer.Services
             return triangles;
         }
 
-        private List<ModelTriangle> GenerateSphere(int meridians, int parallels, float r, Color col)
+        private List<SphereTriangle> GenerateSphere(int meridians, int parallels, float r, Color col)
         {
             var sphere = new List<(Vector3 v1, Vector3 v2, Vector3 v3, Color col)>();
             List<Vector3> vertices = new();
@@ -158,7 +158,7 @@ namespace InfrastructureLayer.Services
                 sphere.Add((vertices[vertices.Count - 1], vertices[a], vertices[b], col));
             }
 
-            return sphere.Select(triangle => (ModelTriangle)new SphereTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col, new ModelPoint(0,0,0))).ToList();
+            return sphere.Select(triangle => new SphereTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col, new ModelPoint(0,0,0))).ToList();
         }
     }
 }

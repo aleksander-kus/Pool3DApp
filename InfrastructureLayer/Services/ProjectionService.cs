@@ -58,7 +58,10 @@ namespace InfrastructureLayer.Services
         {
             foreach(var sphere in scene.Spheres)
             {
+                foreach (var triangle in sphere.Triangles)
+                    triangle.SphereCenter = ProjectPoint(sphere.Center);
                 modelMatrix = Matrix4x4.CreateTranslation(sphere.Center.Coordinates);
+                //sphere.Center = ProjectPoint(sphere.Center);
                 var projectedTriangles = sphere.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();
                 drawingService.ColorTriangles(bitmap, projectedTriangles, zbuffer);
             }
