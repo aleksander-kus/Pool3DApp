@@ -72,7 +72,10 @@ namespace PresentationLayer.Views
                 case Keys.C:
                     presenter.SwitchCamera();
                     break;
+                default:
+                    return;
             }
+            presenter.Update();
         }
     }
 }

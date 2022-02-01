@@ -63,26 +63,24 @@ namespace InfrastructureLayer.Services
             }
         }
 
-        private ModelTriangle ProjectTriangle(ModelTriangle triangle)
+        private CanvasTriangle ProjectTriangle(ModelTriangle triangle)
         {
-            triangle.Points = triangle.Points.Select(point => ProjectPoint(point)).ToList();
-            return triangle;
-            //return new ModelTriangle(, triangle.Color);
+            return new CanvasTriangle(triangle.Points.Select(point => ProjectPoint(point)).ToList(), triangle.Color);
         }
 
-        private ModelPoint ProjectPoint(ModelPoint point)
+        private CanvasPoint ProjectPoint(ModelPoint point)
         {
             var vec = Vector4.Transform(Vector4.Transform(Vector4.Transform(point.Coordinates4, modelMatrix), viewMatrix), projectionMatrix);
             vec /= vec.W;
             return ConvertToCanvas(vec);
         }
 
-        private ModelPoint ConvertToCanvas(Vector4 coords)
+        private CanvasPoint ConvertToCanvas(Vector4 coords)
         {
             int x = (int)Math.Round(parameters.CanvasWidth / 2 * (coords.X + 1));
             int y = (int)Math.Round(parameters.CanvasHeight / 2 * (-coords.Y + 1));
             float z = coords.Z;
-            return new ModelPoint(x, y, z);
+            return new CanvasPoint(x, y, z);
         }
 
     }

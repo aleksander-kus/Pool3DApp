@@ -9,13 +9,6 @@ namespace InfrastructureLayer.Services
 {
     public class DrawingService
     {
-        private readonly IlluminationService illuminationService;
-
-        public DrawingService(IlluminationService illuminationService)
-        {
-            this.illuminationService = illuminationService;
-        }
-
         public void DrawContour(IFastBitmap bitmap, List<CanvasRectangle> rectangles, Color color, double [,] zbuffer)
         {
             foreach(var rectangle in rectangles)
@@ -26,9 +19,9 @@ namespace InfrastructureLayer.Services
                 }
             }
         }
-        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer)
+        public void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangles, double[,] zbuffer)
         {
-            triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, zbuffer));
+            triangles.ForEach(triangle => ScanLineColoring(bitmap, triangle, triangle.Color, zbuffer));
             //Random random = new Random(seed);
             //for(int i = 0; i < triangels.Count; i += 2)
             //{
@@ -42,7 +35,7 @@ namespace InfrastructureLayer.Services
             //    ScanLineColoring(bitmap, triangle, color, zbuffer);
             //}
         }
-        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer)
+        private void ScanLineColoring(IFastBitmap bitmap, CanvasTriangle triangle, Color color, double[,] zbuffer)
         {
             var shape = triangle.Points.Select(point => point.Coordinates).ToList();
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
@@ -94,7 +87,7 @@ namespace InfrastructureLayer.Services
                         if(z < zbuffer[x, y])
                         {
                             zbuffer[x,y] = z;
-                            bitmap.SetPixel(x, y, triangle.Color);//illuminationService.ComputeColor(Vector3.One, triangle.GetNormalVectorForPoint(new ModelPoint(0,0,0))));
+                            bitmap.SetPixel(x, y, color);
                         }
                     }
                 }

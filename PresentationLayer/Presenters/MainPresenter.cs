@@ -43,7 +43,7 @@ namespace PresentationLayer.Presenters
             this.viewLoader = viewLoader;
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
             illuminationService = new();
-            drawingService = new DrawingService(illuminationService);
+            drawingService = new DrawingService();
             sceneService = new SceneService();
             scene = sceneService.GetScene();
 
