@@ -148,7 +148,7 @@ namespace PresentationLayer.Views
             // 
             this.groupBox6.Controls.Add(this.reflectorButton);
             this.groupBox6.Controls.Add(this.mainLightButton);
-            this.groupBox6.Location = new System.Drawing.Point(174, 486);
+            this.groupBox6.Location = new System.Drawing.Point(174, 501);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(152, 81);
             this.groupBox6.TabIndex = 10;
@@ -183,7 +183,7 @@ namespace PresentationLayer.Views
             // 
             this.groupBox4.Controls.Add(this.cubeRotationBox);
             this.groupBox4.Controls.Add(this.cubeMovementBox);
-            this.groupBox4.Location = new System.Drawing.Point(3, 486);
+            this.groupBox4.Location = new System.Drawing.Point(3, 501);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(111, 81);
             this.groupBox4.TabIndex = 9;
@@ -217,7 +217,7 @@ namespace PresentationLayer.Views
             this.groupBox3.Controls.Add(this.topCameraButton);
             this.groupBox3.Controls.Add(this.followingCameraButton);
             this.groupBox3.Controls.Add(this.staticCameraButton);
-            this.groupBox3.Location = new System.Drawing.Point(174, 367);
+            this.groupBox3.Location = new System.Drawing.Point(174, 382);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(155, 105);
             this.groupBox3.TabIndex = 8;
@@ -264,7 +264,7 @@ namespace PresentationLayer.Views
             this.groupBox2.Controls.Add(this.phongButton);
             this.groupBox2.Controls.Add(this.gouraudButton);
             this.groupBox2.Controls.Add(this.constantButton);
-            this.groupBox2.Location = new System.Drawing.Point(3, 367);
+            this.groupBox2.Location = new System.Drawing.Point(3, 382);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(111, 105);
             this.groupBox2.TabIndex = 7;
@@ -344,7 +344,7 @@ namespace PresentationLayer.Views
             this.groupBox1.Controls.Add(this.ksTrackBar);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(329, 358);
+            this.groupBox1.Size = new System.Drawing.Size(329, 373);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Illumination parameters";
@@ -408,7 +408,7 @@ namespace PresentationLayer.Views
             this.groupBox5.Controls.Add(this.hLabel);
             this.groupBox5.Location = new System.Drawing.Point(5, 197);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(318, 155);
+            this.groupBox5.Size = new System.Drawing.Size(318, 170);
             this.groupBox5.TabIndex = 15;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Main light position";
