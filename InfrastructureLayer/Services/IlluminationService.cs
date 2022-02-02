@@ -33,7 +33,7 @@ namespace InfrastructureLayer.Services
             var sourceDistance = Vector3.DistanceSquared(sourceLocation, point);
             I_L /= sourceDistance;
             var R = 2 * Vector3.Dot(N, L) * N - L;
-            baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(V, R), parameters.N);
+            baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(R, V), parameters.N);
             //var actualColor2 = I_L * I_O * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(V, R), parameters.N);
             //if (parameters.LightMode == LightMode.Normal)
             //    return (actualColor1 + actualColor2).To255();
