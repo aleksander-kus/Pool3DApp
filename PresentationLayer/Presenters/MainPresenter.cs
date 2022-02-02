@@ -62,11 +62,11 @@ namespace PresentationLayer.Presenters
             }
         }
 
-        public int MainLigthZ
+        public int MainLigthX
         {
             set
             {
-                illuminationParameters.MainLightZ = value / 10f;
+                illuminationParameters.MainLightX = value / 10f;
             }
         }
 
@@ -77,6 +77,15 @@ namespace PresentationLayer.Presenters
                 illuminationParameters.MainLightY = value / 10f;
             }
         }
+
+        public int MainLigthZ
+        {
+            set
+            {
+                illuminationParameters.MainLightZ = value / 10f;
+            }
+        }
+
 
         public bool MainLight
         {
@@ -186,14 +195,14 @@ namespace PresentationLayer.Presenters
             if(cubeMovement)
             {
                 scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
-                illuminationParameters.ReflectorPosition = scene.Cube.Center;
+                illuminationParameters.ReflectorPosition = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y, scene.Cube.Center.Z + 0.1f);
                 if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
             }
             if(cubeRotation)
             {
                 scene.Cube.Rotation += 10;
                 illuminationParameters.ModifiedReflectorDirection = Vector3.Transform(illuminationParameters.BaseReflectorDirection, 
-                    Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates));
+                    Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180));
             }
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
 

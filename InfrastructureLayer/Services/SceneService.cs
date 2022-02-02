@@ -29,7 +29,7 @@ namespace InfrastructureLayer.Services
                 Cube = new MovingCube()
                 {
                     Triangles = GenerateCube(),
-                    Center = new ModelPoint(TableWidth / 2 + CubeLength, TableLength / 2 + CubeLength, CubeLength / 2),
+                    Center = new ModelPoint(TableWidth / 5 + CubeLength, TableLength / 2 + CubeLength, CubeLength / 2),
                     Rotation = 0
                 },
                 Spheres = new List<ModelSphere>

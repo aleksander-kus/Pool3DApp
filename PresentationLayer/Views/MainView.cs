@@ -37,6 +37,7 @@ namespace PresentationLayer.Views
             kaTrackbar_ValueChanged(null, null);
             hTrackbar_ValueChanged(null, null);
             yTrackbar_ValueChanged(null, null);
+            xTrackbar_ValueChanged(null, null);
             timer.Start();
         }
 
@@ -78,6 +79,11 @@ namespace PresentationLayer.Views
         {
             presenter.MainLigthY = yTrackbar.Value;
             yLabel.Text = $"y: {yTrackbar.Value / 10f}";
+        }
+        private void xTrackbar_ValueChanged(object sender, System.EventArgs e)
+        {
+            presenter.MainLigthX = xTrackbar.Value;
+            xLabel.Text = $"x: {xTrackbar.Value / 10f}";
         }
 
         private void gouraudButton_CheckedChanged(object sender, System.EventArgs e)
@@ -129,5 +135,6 @@ namespace PresentationLayer.Views
         {
             presenter.Reflector = reflectorButton.Checked;
         }
+
     }
 }
