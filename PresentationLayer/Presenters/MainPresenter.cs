@@ -62,6 +62,14 @@ namespace PresentationLayer.Presenters
             }
         }
 
+        public int MainLigthHeight
+        {
+            set
+            {
+                illuminationParameters.MainLightHeight = value / 10f;
+            }
+        }
+
         public ShadingMode ShadingMode
         {
             set
@@ -71,6 +79,24 @@ namespace PresentationLayer.Presenters
                     drawingParameters.ShadingMode = value;
                     Update();
                 }
+            }
+        }
+
+        private bool cubeRotation = false;
+        public bool CubeRotiation {
+            set
+            {
+                cubeRotation = value;
+                Update();
+            }
+        }
+        private bool cubeMovement = false;
+        public bool CubeMovement
+        {
+            set
+            {
+                cubeMovement = value;
+                Update();
             }
         }
 
@@ -91,8 +117,8 @@ namespace PresentationLayer.Presenters
             scene = sceneService.GetScene();
 
             cameras.Add(new StaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1)));
-            cameras.Add(new CubeFollowingCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1), scene.Cube));
-            cameras.Add(new CubeOnTopCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0, 0, 0), new Vector3(0, 0, 1), scene.Cube));
+            cameras.Add(new CubeFollowingStaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1), scene.Cube));
+            cameras.Add(new CubeFollowingCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0, 0, 0), new Vector3(0, 0, 1), scene.Cube));
             projectionParameters = new()
             {
                 Camera = cameras[activeCameraId],
@@ -124,15 +150,17 @@ namespace PresentationLayer.Presenters
         {
             using Graphics g1 = Graphics.FromImage(bitmap);
             g1.Clear(Color.Black);
-            scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
-            if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
-            scene.Cube.Rotation += 10;
-            //Camera activeCamera = cameras[activeCameraId];
+            if(cubeMovement)
+            {
+                scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
+                if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
+            }
+            if(cubeRotation)
+                scene.Cube.Rotation += 10;
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
 
             projectionService.ProjectScene(fastBitmap);
-            bitmap = fastBitmap.Bitmap;
-            view.CanvasImage = bitmap;
+            view.CanvasImage = bitmap = fastBitmap.Bitmap;
             view.RedrawCanvas();
         }
 

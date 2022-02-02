@@ -35,6 +35,7 @@ namespace PresentationLayer.Views
             kdTrackBar_ValueChanged(null, null);
             ksTrackBar_ValueChanged(null, null);
             kaTrackbar_ValueChanged(null, null);
+            hTrackbar_ValueChanged(null, null);
             timer.Start();
         }
 
@@ -66,6 +67,11 @@ namespace PresentationLayer.Views
             presenter.Ka = kaTrackbar.Value;
             kaLabel.Text = $"Ka: {kaTrackbar.Value / 100f}";
         }
+        private void hTrackbar_ValueChanged(object sender, System.EventArgs e)
+        {
+            presenter.MainLigthHeight = hTrackbar.Value;
+            hLabel.Text = $"H: {hTrackbar.Value / 10f}";
+        }
 
         private void gouraudButton_CheckedChanged(object sender, System.EventArgs e)
         {
@@ -96,5 +102,16 @@ namespace PresentationLayer.Views
         {
             presenter.SwitchCamera(2);
         }
+
+        private void cubeMovementBox_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.CubeMovement = cubeMovementBox.Checked;
+        }
+
+        private void cubeRotationBox_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.CubeRotiation = cubeRotationBox.Checked;
+        }
+
     }
 }
