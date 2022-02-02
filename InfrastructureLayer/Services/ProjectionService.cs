@@ -50,6 +50,9 @@ namespace InfrastructureLayer.Services
 
         private void ProjectCube(IFastBitmap bitmap, double[,] zbuffer)
         {
+            var rotationMatrix =  Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180);
+            foreach (var triangle in scene.Cube.Triangles)
+                triangle.RotatedNormalVector = Vector3.Transform(triangle.OriginalNormalVector, rotationMatrix);
             Matrix4x4.Invert(modelMatrix * viewMatrix * projectionMatrix, out var invmatrix);
             modelMatrix = Matrix4x4.CreateTranslation(scene.Cube.Center.Coordinates) * Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates);
             var projectedTriangles = scene.Cube.Triangles.Select(triangle => ProjectTriangle(triangle)).ToList();

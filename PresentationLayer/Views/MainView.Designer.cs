@@ -48,8 +48,8 @@ namespace PresentationLayer.Views
             this.fovLabel = new System.Windows.Forms.Label();
             this.fovBar = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.kaTrackbar = new System.Windows.Forms.TrackBar();
             this.kaLabel = new System.Windows.Forms.Label();
+            this.kaTrackbar = new System.Windows.Forms.TrackBar();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -281,7 +281,7 @@ namespace PresentationLayer.Views
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fovBar.Location = new System.Drawing.Point(9, 28);
             this.fovBar.Maximum = 120;
-            this.fovBar.Minimum = 30;
+            this.fovBar.Minimum = 10;
             this.fovBar.Name = "fovBar";
             this.fovBar.Size = new System.Drawing.Size(317, 45);
             this.fovBar.TabIndex = 0;
@@ -300,6 +300,15 @@ namespace PresentationLayer.Views
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Illumination parameters";
             // 
+            // kaLabel
+            // 
+            this.kaLabel.AutoSize = true;
+            this.kaLabel.Location = new System.Drawing.Point(134, 213);
+            this.kaLabel.Name = "kaLabel";
+            this.kaLabel.Size = new System.Drawing.Size(21, 15);
+            this.kaLabel.TabIndex = 10;
+            this.kaLabel.Text = "ks:";
+            // 
             // kaTrackbar
             // 
             this.kaTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -312,15 +321,6 @@ namespace PresentationLayer.Views
             this.kaTrackbar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.kaTrackbar.Value = 50;
             this.kaTrackbar.ValueChanged += new System.EventHandler(this.kaTrackbar_ValueChanged);
-            // 
-            // kaLabel
-            // 
-            this.kaLabel.AutoSize = true;
-            this.kaLabel.Location = new System.Drawing.Point(134, 213);
-            this.kaLabel.Name = "kaLabel";
-            this.kaLabel.Size = new System.Drawing.Size(21, 15);
-            this.kaLabel.TabIndex = 10;
-            this.kaLabel.Text = "ks:";
             // 
             // MainView
             // 

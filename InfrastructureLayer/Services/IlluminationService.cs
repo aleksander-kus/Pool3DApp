@@ -24,7 +24,7 @@ namespace InfrastructureLayer.Services
             //var I_O = parameters.ColoringMode == ColoringMode.SolidColor ? parameters.SceneColor.From255() : GetColorFromTexture(point, parameters).From255();
             //// light color
             var I_L = Vector3.One;
-            var N = normalVector;
+            var N = Vector3.Normalize(normalVector);
             //// additional versors
             var V = Vector3.Normalize(camera.Position.Coordinates - point);// / Vector3.DistanceSquared(camera.Position.Coordinates, point);
             var sourceLocation = parameters.MainLightPosition.Coordinates;
@@ -46,8 +46,9 @@ namespace InfrastructureLayer.Services
             //normalVector += Vector3.One;
             //normalVector *= 1 / 2f;
             //normalVector = Vector3.Normalize(normalVector);
-            baseColor = baseColor * 1/ Vector3.Distance(camera.Position.Coordinates, point);
+            //baseColor = baseColor * 1 / Vector3.Distance(camera.Position.Coordinates, point);
             return baseColor.To255();
+            //return normalVector.To255();
         }
 
         private static float CosineBetweenVectors(Vector3 vec1, Vector3 vec2)
