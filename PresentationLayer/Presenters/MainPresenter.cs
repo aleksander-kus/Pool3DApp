@@ -62,11 +62,19 @@ namespace PresentationLayer.Presenters
             }
         }
 
-        public int MainLigthHeight
+        public int MainLigthZ
         {
             set
             {
-                illuminationParameters.MainLightHeight = value / 10f;
+                illuminationParameters.MainLightZ = value / 10f;
+            }
+        }
+
+        public int MainLigthY
+        {
+            set
+            {
+                illuminationParameters.MainLightY = value / 10f;
             }
         }
 

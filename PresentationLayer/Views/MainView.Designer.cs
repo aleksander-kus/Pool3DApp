@@ -56,6 +56,8 @@ namespace PresentationLayer.Views
             this.hTrackbar = new System.Windows.Forms.TrackBar();
             this.hLabel = new System.Windows.Forms.Label();
             this.ksTrackBar = new System.Windows.Forms.TrackBar();
+            this.yTrackbar = new System.Windows.Forms.TrackBar();
+            this.yLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -70,6 +72,7 @@ namespace PresentationLayer.Views
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -354,14 +357,16 @@ namespace PresentationLayer.Views
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.yTrackbar);
+            this.groupBox5.Controls.Add(this.yLabel);
             this.groupBox5.Controls.Add(this.hTrackbar);
             this.groupBox5.Controls.Add(this.hLabel);
             this.groupBox5.Location = new System.Drawing.Point(5, 200);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(318, 71);
+            this.groupBox5.Size = new System.Drawing.Size(318, 127);
             this.groupBox5.TabIndex = 15;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Main light height";
+            this.groupBox5.Text = "Main light position";
             // 
             // hTrackbar
             // 
@@ -381,9 +386,9 @@ namespace PresentationLayer.Views
             this.hLabel.AutoSize = true;
             this.hLabel.Location = new System.Drawing.Point(278, 21);
             this.hLabel.Name = "hLabel";
-            this.hLabel.Size = new System.Drawing.Size(17, 15);
+            this.hLabel.Size = new System.Drawing.Size(15, 15);
             this.hLabel.TabIndex = 14;
-            this.hLabel.Text = "h:";
+            this.hLabel.Text = "z:";
             // 
             // ksTrackBar
             // 
@@ -397,6 +402,29 @@ namespace PresentationLayer.Views
             this.ksTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.ksTrackBar.Value = 50;
             this.ksTrackBar.ValueChanged += new System.EventHandler(this.ksTrackBar_ValueChanged);
+            // 
+            // yTrackbar
+            // 
+            this.yTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.yTrackbar.Location = new System.Drawing.Point(8, 61);
+            this.yTrackbar.Maximum = 25;
+            this.yTrackbar.Minimum = -5;
+            this.yTrackbar.Name = "yTrackbar";
+            this.yTrackbar.Size = new System.Drawing.Size(274, 45);
+            this.yTrackbar.TabIndex = 15;
+            this.yTrackbar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.yTrackbar.Value = 10;
+            this.yTrackbar.ValueChanged += new System.EventHandler(this.yTrackbar_ValueChanged);
+            // 
+            // yLabel
+            // 
+            this.yLabel.AutoSize = true;
+            this.yLabel.Location = new System.Drawing.Point(280, 62);
+            this.yLabel.Name = "yLabel";
+            this.yLabel.Size = new System.Drawing.Size(16, 15);
+            this.yLabel.TabIndex = 16;
+            this.yLabel.Text = "y:";
             // 
             // MainView
             // 
@@ -428,6 +456,7 @@ namespace PresentationLayer.Views
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -461,5 +490,7 @@ namespace PresentationLayer.Views
         private System.Windows.Forms.TrackBar hTrackbar;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label hLabel;
+        private System.Windows.Forms.TrackBar yTrackbar;
+        private System.Windows.Forms.Label yLabel;
     }
 }
