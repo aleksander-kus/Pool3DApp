@@ -1,31 +1,45 @@
 ﻿using DomainLayer;
+using DomainLayer.Dto;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace InfrastructureLayer.Services
 {
-    public class DrawingService : IDrawingService
+    public class DrawingService
     {
-        public void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer, int seed)
+        private readonly IlluminationService illuminationService;
+        private readonly DrawingParameters parameters;
+        public DrawingService(IlluminationService illuminationService, DrawingParameters drawingParameters)
         {
-            Random random = new Random(seed);
-            for(int i = 0; i < triangels.Count; i += 2)
-            {
-                Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
-                ScanLineColoring(bitmap, triangels[i], color, zbuffer);
-                ScanLineColoring(bitmap, triangels[i+ 1], color, zbuffer);
-            }
-            //foreach (var triangle in triangels)
-            //{
-            //    Color color = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
-            //    ScanLineColoring(bitmap, triangle, color, zbuffer);
-            //}
+            this.illuminationService = illuminationService;
+            parameters = drawingParameters;
         }
-        private void ScanLineColoring(IFastBitmap bitmap, List<Vector3> shape, Color color, double[,] zbuffer)
+        public void ColorTriangles(IFastBitmap bitmap, List<ModelTriangle> triangles, double[,] zbuffer, Matrix4x4 invertedMatrix, Camera camera)
         {
+            //Parallel.ForEach(triangles, triangle => ScanLineColoring(bitmap, triangle, zbuffer, invertedMatrix));
+            foreach (var triangle in triangles)
+            {
+                ScanLineColoring(bitmap, triangle, zbuffer, invertedMatrix, camera);
+            }
+        }
+        private void ScanLineColoring(IFastBitmap bitmap, ModelTriangle triangle, double[,] zbuffer, Matrix4x4 invertedMatrix, Camera camera)
+        {
+            Vector3 color1 = Vector3.Zero, color2 = Vector3.Zero, color3 = Vector3.Zero;
+            var shape = triangle.Points.Select(point => ConvertToCanvas(point, bitmap.Width, bitmap.Height)).ToList();
+            if(parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Constant)
+            {
+                color1 = ComputePointColor((triangle.Points[0].Coordinates + triangle.Points[1].Coordinates + triangle.Points[2].Coordinates) / 3, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+            }
+            else if (parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Gouraud)
+            {
+                color1 = ComputePointColor(triangle.Points[0].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+                color2 = ComputePointColor(triangle.Points[1].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+                color3 = ComputePointColor(triangle.Points[2].Coordinates, bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera, false).From255();
+            }
             var P = shape.Select((point, index) => (point.X, point.Y, index)).OrderBy(shape => shape.Y).ToArray();
             List<(int y_max, double x, double m)> AET = new();
             int ymin = (int)P[0].Y;
@@ -71,12 +85,33 @@ namespace InfrastructureLayer.Services
                     {
                         if (x < 0 || x >= bitmap.Width || y < 0 || y >= bitmap.Height)
                             continue;
-                        double z = GetZ(x, y, shape[0], shape[1], shape[2]);
-                        if(z < zbuffer[x, y])
+                        float z = GetZ(x, y, shape[0], shape[1], shape[2]);
+
+                        if (z >= zbuffer[x, y])
+                            continue;
+                        else
+                            zbuffer[x, y] = z;
+
+                        var color = Color.White;
+                        if (parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Constant)
                         {
-                            zbuffer[x,y] = z;
-                            bitmap.SetPixel(x, y, color);
+                            color = color1.To255();
                         }
+                        else if (parameters.ShadingMode == DomainLayer.Enum.ShadingMode.Gouraud)
+                        {
+                            var factors = GetInterpolationFactors(shape, new Vector3(x, y, z));
+                            color = (color1 * factors.X + color2 * factors.Y + color3 * factors.Z).To255();
+                        }
+                        else
+                        {
+                            var point = ConvertFromCanvas(new Vector3(x, y, z), bitmap.Width, bitmap.Height);
+                            var modelVector = Vector4.Transform(point.Coordinates4, invertedMatrix);
+                            modelVector /= modelVector.W;
+                            var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
+                            color = ComputePointColor(new Vector3(x, y, z), bitmap.Width, bitmap.Height, invertedMatrix, triangle, camera);
+                        }
+
+                        bitmap.SetPixel(x, y, color);
                     }
                 }
                 // Update the x value for each edge
@@ -86,6 +121,49 @@ namespace InfrastructureLayer.Services
                     AET[i] = (y_max, x + 1 / m, m);
                 }
             }
+        }
+
+        private Color ComputePointColor(Vector3 point, int width, int height, Matrix4x4 invertedMatrix, ModelTriangle triangle, Camera camera, bool convert = true)
+        {
+            Vector4 modelVector = Vector4.Zero;
+            if (convert)
+            {
+                var convertedPoint = ConvertFromCanvas(point, width, height);
+                modelVector = Vector4.Transform(convertedPoint.Coordinates4, invertedMatrix);
+            }
+            else
+                modelVector = Vector4.Transform(point, invertedMatrix);
+            modelVector /= modelVector.W;
+            var modelPoint = new ModelPoint(modelVector.X, modelVector.Y, modelVector.Z);
+            return illuminationService.ComputeColor(modelPoint.Coordinates, triangle.GetNormalVectorForPoint(modelPoint), triangle.Color, camera);
+        }
+
+        private Vector3 ConvertToCanvas(ModelPoint point, int width, int height)
+        {
+            int x = (int)Math.Round(width / 2 * (point.X + 1));
+            int y = (int)Math.Round(height / 2 * (-point.Y + 1));
+            float z = point.Z;
+            return new Vector3(x, y, z);
+        }
+
+        private ModelPoint ConvertFromCanvas(Vector3 point, int width, int height)
+        {
+            float x = 2 * point.X / width - 1;
+            float y = -(2 * point.Y / height - 1);
+            float z = point.Z;
+            return new ModelPoint(x, y, z);
+        }
+
+        private static Vector3 GetInterpolationFactors(List<Vector3> shape, Vector3 point)
+        {
+            var f1 = shape[0] - point;
+            var f2 = shape[1] - point;
+            var f3 = shape[2] - point;
+            var TriangleArea = Vector3.Cross(shape[0] - shape[1], shape[0] - shape[2]).Length();
+            var a1 = Vector3.Cross(f2, f3).Length() / TriangleArea;
+            var a2 = Vector3.Cross(f3, f1).Length() / TriangleArea;
+            var a3 = Vector3.Cross(f1, f2).Length() / TriangleArea;
+            return new Vector3(a1, a2, a3);
         }
 
         /// <summary>

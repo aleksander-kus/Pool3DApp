@@ -7,6 +7,6 @@ namespace InfrastructureLayer.Services
 {
     public interface IDrawingService
     {
-        void ColorTriangles(IFastBitmap bitmap, List<List<Vector3>> triangels, double[,] zbuffer, int seed);
+        void ColorTriangles(IFastBitmap bitmap, List<CanvasTriangle> triangles, double[,] zbuffer, int seed);
     }
 }

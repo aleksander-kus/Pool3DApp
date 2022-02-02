@@ -1,14 +1,16 @@
-﻿using InfrastructureLayer;
+﻿using DomainLayer;
+using DomainLayer.Cameras;
+using DomainLayer.Dto;
+using DomainLayer.Enum;
+using InfrastructureLayer;
 using InfrastructureLayer.Services;
 using PresentationLayer.ViewLoaders;
 using PresentationLayer.Views;
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Numerics;
-using System.Linq;
 using System.Collections.Generic;
-using DomainLayer;
+using System.Drawing;
+using System.Linq;
+using System.Numerics;
 
 namespace PresentationLayer.Presenters
 {
@@ -17,162 +19,205 @@ namespace PresentationLayer.Presenters
         private Bitmap bitmap;
         private readonly IMainView view;
         private readonly IViewLoader viewLoader;
-        private readonly IDrawingService drawingService;
-        private readonly MatrixService matrixService;
-        private const int n = 5;
-        private const double f = 100;
-        private double fov = Math.PI / 180 * 100; // kat patrzenia w stopniach
+        private readonly DrawingService drawingService;
+        private readonly SceneService sceneService;
+        private readonly ProjectionService projectionService;
+        private readonly IlluminationService illuminationService;
+        private readonly ProjectionParameters projectionParameters;
+        private readonly IlluminationParameters illuminationParameters;
+        private readonly DrawingParameters drawingParameters;
+        private const int n = 1;
+        private const float f = 1.1f;
         public int Fov
         {
             set
             {
-                fov = Math.PI / 180 * value;
+                projectionParameters.FieldOfView = (float)Math.PI / 180 * value;
+                Update();
+            }
+        }
+        public int Kd
+        {
+            set
+            {
+                illuminationParameters.Kd = value / 100f;
+                Update();
+            }
+        }
+        public int Ks
+        {
+            set
+            {
+                illuminationParameters.Ks = value / 100f;
+                Update();
             }
         }
 
-        private double e;
-        private double a = 1; // aspect ratio picture boxa (H / W)
-        private double[,] ModelMatrix;
-        private double[,] ViewMatrix;
-        private double[,] ProjectionMatrix;
-        private double[][] Points;
-        private List<List<int>> connections;
-        private List<List<double[]>> triangles = new();
+        public int Ka
+        {
+            set
+            {
+                illuminationParameters.Ka = value / 100f;
+                Update();
+            }
+        }
+
+        public int MainLigthX
+        {
+            set
+            {
+                illuminationParameters.MainLightX = value / 10f;
+            }
+        }
+
+        public int MainLigthY
+        {
+            set
+            {
+                illuminationParameters.MainLightY = value / 10f;
+            }
+        }
+
+        public int MainLigthZ
+        {
+            set
+            {
+                illuminationParameters.MainLightZ = value / 10f;
+            }
+        }
+
+
+        public bool MainLight
+        {
+            set
+            {
+                if (value)
+                    illuminationParameters.LightSources |= LightSources.Main;
+                else
+                    illuminationParameters.LightSources ^= LightSources.Main;
+                Update();
+            }
+        }
+
+        public bool Reflector
+        {
+            set
+            {
+                if (value)
+                    illuminationParameters.LightSources |= LightSources.Reflector;
+                else
+                    illuminationParameters.LightSources ^= LightSources.Reflector;
+                Update();
+            }
+        }
+
+        public ShadingMode ShadingMode
+        {
+            set
+            {
+                if(drawingParameters.ShadingMode != value)
+                {
+                    drawingParameters.ShadingMode = value;
+                    Update();
+                }
+            }
+        }
+
+        private bool cubeRotation = false;
+        public bool CubeRotiation {
+            set
+            {
+                cubeRotation = value;
+                Update();
+            }
+        }
+        private bool cubeMovement = false;
+        public bool CubeMovement
+        {
+            set
+            {
+                cubeMovement = value;
+                Update();
+            }
+        }
+
+        private List<Camera> cameras = new();
+        private int activeCameraId = 0;
+        private readonly Scene scene;
+
         public MainPresenter(IMainView view, IViewLoader viewLoader)
         {
             this.view = view;
             this.viewLoader = viewLoader;
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
-            drawingService = new DrawingService();
-            matrixService = new MatrixService();
+            illuminationParameters = new();
+            drawingParameters = new();
+            illuminationService = new(illuminationParameters);
+            drawingService = new DrawingService(illuminationService, drawingParameters);
+            sceneService = new SceneService();
+            scene = sceneService.GetScene();
+            illuminationParameters.ReflectorPosition = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y, scene.Cube.Center.Z + 0.1f);
 
-            e = 1 / Math.Tan(fov / 2);
-            a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
-            double[,] mm = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-            double[,] vm = { { 0, 1, 0, -0.5 }, { 0, 0, 1, -0.5 }, { 1, 0, 0, -10 }, { 0, 0, 0, 1 } };
-            double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
-            ModelMatrix = mm;
-            ViewMatrix = vm;
-            ProjectionMatrix = pm;
-            double[][] points = { new double[]{ 0, 0, 0, 1 }, new double[]{ 1, 0, 0, 1 }, new double[]{ 1, 1, 0, 1 }, new double[]{ 0, 1, 0, 1 },
-            new double[]{ 0, 0, 1, 1 }, new double[]{ 1, 0, 1, 1 }, new double[]{ 1, 1, 1, 1 }, new double[]{ 0, 1, 1, 1 }};
-            Points = points;
-            List<List<int>> connectedWith = new();
-            foreach(var point in points)
+            cameras.Add(new StaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1)));
+            cameras.Add(new CubeFollowingStaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1), scene.Cube));
+            cameras.Add(new CubeFollowingCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0, 0, 0), new Vector3(0, 0, 1), scene.Cube));
+            projectionParameters = new()
             {
-                List<int> connected = new();
-                for (int i = 0; i < points.Length; ++i)
-                    //if (points[i][0] == point[0] && points[i][1] == point[1] && points[i][2] != point[2] || 
-                    //    points[i][1] == point[1] && points[i][2] == point[2] && points[i][0] != point[0] || 
-                    //    points[i][0] == point[0] && points[i][2] == point[2] && points[i][1] != point[1])
-                    if (points[i][0] == point[0] ||
-                        points[i][1] == point[1] ||
-                        points[i][2] == point[2])
-                        connected.Add(i);
-                connectedWith.Add(connected);
-            }
-            connections = connectedWith;
-            ExtractTriangles();
-            Rotate();
-            this.view.CanvasImage = bitmap;
-            this.view.RedrawCanvas();
+                Camera = cameras[activeCameraId],
+                CanvasHeight = view.CanvasHeight,
+                CanvasWidth = view.CanvasWidth,
+                NearPlaneDistance = n,
+                FarPlaneDistance = f,
+                FieldOfView = (float)Math.PI / 180 * 60
+            };
+
+            projectionService = new(scene, projectionParameters, drawingService);
+            Update();
         }
 
-        private double[] ProjectPoint(double[] point)
+        public void MoveCube(float x = 0, float y = 0, float z = 0, int angle = 0)
         {
-            double[] pointPrim = matrixService.Multiply(ProjectionMatrix, matrixService.Multiply(ViewMatrix, matrixService.Multiply(ModelMatrix, point)));
-            return pointPrim.Select(coord => coord / pointPrim[3]).ToArray();
+            scene.Cube.Center = new ModelPoint(scene.Cube.Center.X + x, scene.Cube.Center.Y + y, scene.Cube.Center.Z + z);
+            scene.Cube.Rotation += angle;
         }
 
-        private Vector3 ConvertToCanvas(double[] point)
+        public void SwitchCamera(int id)
         {
-            int x = (int)Math.Round(view.CanvasWidth / 2 * (point[0] + 1));
-            int y = (int)Math.Round(view.CanvasHeight / 2 * (point[1] + 1));
-            float z = (float)point[2];
-            return new Vector3(x, y, z);
+            activeCameraId = id;
+            projectionParameters.Camera = cameras[activeCameraId];
+            Update();
         }
-
-        private void DrawPoints(Vector3[] points)
+        private float cubeYDelta = 0.03f;
+        public void Update()
         {
-            Graphics g = Graphics.FromImage(bitmap);
-            for(int i = 0; i < points.Length; ++i)
+            using Graphics g1 = Graphics.FromImage(bitmap);
+            g1.Clear(Color.Black);
+            if(cubeMovement)
             {
-                g.FillRectangle(Brushes.Black, points[i].X, points[i].Y, 2, 2);
-                for(int j = 0; j < connections[i].Count; ++j)
-                    g.DrawLine(Pens.Black, new Point((int)points[i].X, (int)points[i].Y), new Point((int)points[connections[i][j]].X, (int)points[connections[i][j]].Y));
+                scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
+                illuminationParameters.ReflectorPosition = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y, scene.Cube.Center.Z + 0.1f);
+                if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
             }
-        }
-
-        private void DrawTriangles(List<List<Vector3>> triangles)
-        {
-            Graphics g = Graphics.FromImage(bitmap);
-            foreach(var triangle in triangles)
+            if(cubeRotation)
             {
-                g.DrawPolygon(Pens.Black, triangle.Select(point => new Point((int)point.X, (int)point.Y)).ToArray());
+                scene.Cube.Rotation += 10;
+                illuminationParameters.ModifiedReflectorDirection = Vector3.Transform(illuminationParameters.BaseReflectorDirection, 
+                    Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180));
             }
-
-        }
-        private void ExtractTriangles()
-        {
-            triangles.Clear();
-            for(int i = 0;i <= 1; ++i)
-            {
-                triangles.Add(new List<double[]> { new double[] { 0, 0, i, 1 }, new double[] { 0, 1, i, 1 }, new double[] { 1, 1, i, 1 } });
-                triangles.Add(new List<double[]> { new double[] { 0, 0, i, 1 }, new double[] { 1, 0, i, 1 }, new double[] { 1, 1, i, 1 } });
-            }
-            for (int i = 0; i <= 1; ++i)
-            {
-                triangles.Add(new List<double[]> { new double[] { 0, i, 0, 1 }, new double[] { 0, i, 1, 1 }, new double[] { 1, i, 1, 1 } });
-                triangles.Add(new List<double[]> { new double[] { 0, i, 0, 1 }, new double[] { 1, i, 0, 1 }, new double[] { 1, i, 1, 1 } });
-            }
-            for (int i = 0; i <= 1; ++i)
-            {
-                triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 1, 0, 1 }, new double[] { i, 1, 1, 1 } });
-                triangles.Add(new List<double[]> { new double[] { i, 0, 0, 1 }, new double[] { i, 0, 1, 1 }, new double[] { i, 1, 1, 1 } });
-            }
-        }
-
-        private int alpha = 0;
-        public void Rotate(int degree = 5)
-        {
-            using Graphics g = Graphics.FromImage(bitmap);
-            g.Clear(Color.White);
-            double rad = Math.PI * alpha / 180;
-            e = 1 / Math.Tan(fov / 2);
-            a = (double)this.view.CanvasHeight / this.view.CanvasWidth;
-            double[,] mm = { { Math.Cos(rad), -Math.Sin(rad), 0, 0 }, { Math.Sin(rad), Math.Cos(rad), 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-            double[,] pm = { { e, 0, 0, 0 }, { 0, e / a, 0, 0 }, { 0, 0, -(f + n) / (f - n), -2 * f * n / (f - n) }, { 0, 0, -1, 0 } };
-            ModelMatrix = mm;
-            ProjectionMatrix = pm;
-            var projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
-            ModelMatrix = mm;
-            double[,] zbuffer = new double[view.CanvasWidth, view.CanvasHeight];
-            for (int i = 0; i < zbuffer.GetLength(0); i++)
-                for (int j = 0; j < zbuffer.GetLength(1); j++)
-                    zbuffer[i, j] = double.PositiveInfinity;
-            DrawTriangles(projected_triangles);
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
-            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 2000);
-            rad *= 2;
-            double[,] mm2 = { { 1, 0, 0, 0 }, { 0, Math.Cos(rad), -Math.Sin(rad), 0 }, { 0, Math.Sin(rad), Math.Cos(rad), 0 }, { 0, 0, 0, 1 } };
 
-            ModelMatrix = mm2;
-
-            projected_triangles = triangles.Select(triangle => triangle.Select(point => ConvertToCanvas(ProjectPoint(point))).ToList()).ToList();
-            DrawTriangles(projected_triangles);
-            drawingService.ColorTriangles(fastBitmap, projected_triangles, zbuffer, 4321);
-
+            projectionService.ProjectScene(fastBitmap);
             view.CanvasImage = bitmap = fastBitmap.Bitmap;
             view.RedrawCanvas();
-            alpha += degree;
         }
 
         public void LoadCanvasDimensions()
         {
             bitmap = new(view.CanvasWidth, view.CanvasHeight);
+            projectionParameters.CanvasHeight = view.CanvasHeight;
+            projectionParameters.CanvasWidth = view.CanvasWidth;
             view.CanvasImage = bitmap;
-            Rotate(0);
-
+            Update();
         }
     }
 }
