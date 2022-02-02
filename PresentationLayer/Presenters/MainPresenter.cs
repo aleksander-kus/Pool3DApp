@@ -196,7 +196,7 @@ namespace PresentationLayer.Presenters
             {
                 scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
                 illuminationParameters.ReflectorPosition = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y, scene.Cube.Center.Z + 0.1f);
-                if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
+                if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0f) cubeYDelta = -cubeYDelta;
             }
             if(cubeRotation)
             {

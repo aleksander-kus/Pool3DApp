@@ -145,7 +145,6 @@ namespace InfrastructureLayer.Services
                     int a1 = aStart + (i + 1) % meridians;
                     int b = bStart + i;
                     int b1 = bStart + (i + 1) % meridians;
-                    //Add Quad
                     sphere.Add((vertices[a], vertices[a1], vertices[b1], col));
                     sphere.Add((vertices[a], vertices[b1], vertices[b], col));
                 }
@@ -155,7 +154,7 @@ namespace InfrastructureLayer.Services
             {
                 int a = i + meridians * (parallels - 2) + 1;
                 int b = (i + 1) % meridians + meridians * (parallels - 2) + 1;
-                sphere.Add((vertices[vertices.Count - 1], vertices[a], vertices[b], col));
+                sphere.Add((vertices[^1], vertices[a], vertices[b], col));
             }
 
             return sphere.Select(triangle => new SphereTriangle(new List<ModelPoint> { new ModelPoint(triangle.v1), new ModelPoint(triangle.v2), new ModelPoint(triangle.v3) }, col)).ToList();
