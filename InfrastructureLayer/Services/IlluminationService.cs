@@ -29,6 +29,7 @@ namespace InfrastructureLayer.Services
             var V = Vector3.Normalize(camera.Position.Coordinates - point);// / Vector3.DistanceSquared(camera.Position.Coordinates, point);
             var sourceLocation = parameters.MainLightPosition.Coordinates;
             var L = Vector3.Normalize(sourceLocation - point);
+            //V = L;
 
             var sourceDistance = Vector3.DistanceSquared(sourceLocation, point);
             I_L /= sourceDistance;
