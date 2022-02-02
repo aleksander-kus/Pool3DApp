@@ -78,6 +78,30 @@ namespace PresentationLayer.Presenters
             }
         }
 
+        public bool MainLight
+        {
+            set
+            {
+                if (value)
+                    illuminationParameters.LightSources |= LightSources.Main;
+                else
+                    illuminationParameters.LightSources ^= LightSources.Main;
+                Update();
+            }
+        }
+
+        public bool Reflector
+        {
+            set
+            {
+                if (value)
+                    illuminationParameters.LightSources |= LightSources.Reflector;
+                else
+                    illuminationParameters.LightSources ^= LightSources.Reflector;
+                Update();
+            }
+        }
+
         public ShadingMode ShadingMode
         {
             set
@@ -123,6 +147,7 @@ namespace PresentationLayer.Presenters
             drawingService = new DrawingService(illuminationService, drawingParameters);
             sceneService = new SceneService();
             scene = sceneService.GetScene();
+            illuminationParameters.ReflectorPosition = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y, scene.Cube.Center.Z + 0.1f);
 
             cameras.Add(new StaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1)));
             cameras.Add(new CubeFollowingStaticCamera(new ModelPoint(2, 2.5f, 2), new ModelPoint(0.5f, 1, 0), new Vector3(0, 0, 1), scene.Cube));
@@ -161,10 +186,15 @@ namespace PresentationLayer.Presenters
             if(cubeMovement)
             {
                 scene.Cube.Center = new ModelPoint(scene.Cube.Center.X, scene.Cube.Center.Y + cubeYDelta, scene.Cube.Center.Z);
+                illuminationParameters.ReflectorPosition = scene.Cube.Center;
                 if (scene.Cube.Center.Y > 1.95f || scene.Cube.Center.Y < 0.3f) cubeYDelta = -cubeYDelta;
             }
             if(cubeRotation)
+            {
                 scene.Cube.Rotation += 10;
+                illuminationParameters.ModifiedReflectorDirection = Vector3.Transform(illuminationParameters.BaseReflectorDirection, 
+                    Matrix4x4.CreateRotationZ(scene.Cube.Rotation * (float)Math.PI / 180, scene.Cube.Center.Coordinates));
+            }
             IFastBitmap fastBitmap = new ByteBitmap(bitmap);
 
             projectionService.ProjectScene(fastBitmap);

@@ -119,5 +119,15 @@ namespace PresentationLayer.Views
         {
             presenter.CubeRotiation = cubeRotationBox.Checked;
         }
+
+        private void mainLightButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.MainLight = mainLightButton.Checked;
+        }
+
+        private void reflectorButton_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.Reflector = reflectorButton.Checked;
+        }
     }
 }

@@ -6,8 +6,8 @@ namespace DomainLayer.Enum
     public enum LightSources
     {
         None = 0,
-        Top = 1,
+        Main = 1,
         Reflector = 2,
-        All = Top | Reflector
+        All = Main | Reflector
     }
 }

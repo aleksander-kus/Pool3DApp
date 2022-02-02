@@ -1,5 +1,6 @@
 ﻿using DomainLayer;
 using DomainLayer.Dto;
+using DomainLayer.Enum;
 using System;
 using System.Drawing;
 using System.Numerics;
@@ -19,22 +20,35 @@ namespace InfrastructureLayer.Services
         {
             // ambient
             var baseColor = color.From255() * parameters.Ka;
-
-            //// the base color of point
-            //var I_O = parameters.ColoringMode == ColoringMode.SolidColor ? parameters.SceneColor.From255() : GetColorFromTexture(point, parameters).From255();
-            //// light color
             var I_L = Vector3.One;
             var N = Vector3.Normalize(normalVector);
-            //// additional versors
-            var V = Vector3.Normalize(camera.Position.Coordinates - point);// / Vector3.DistanceSquared(camera.Position.Coordinates, point);
-            var sourceLocation = parameters.MainLightPosition.Coordinates;
-            var L = Vector3.Normalize(sourceLocation - point);
-            //V = L;
+            var V = Vector3.Normalize(camera.Position.Coordinates - point);
+            //// the base color of point
+            //var I_O = parameters.ColoringMode == ColoringMode.SolidColor ? parameters.SceneColor.From255() : GetColorFromTexture(point, parameters).From255();
+            if (parameters.LightSources.HasFlag(LightSources.Main))
+            {
+                var sourceLocation = parameters.MainLightPosition.Coordinates;
+                var sourceDistance = Vector3.DistanceSquared(sourceLocation, point);
+                var L = Vector3.Normalize(sourceLocation - point);
+                I_L /= sourceDistance;
+                var R = 2 * Vector3.Dot(N, L) * N - L;
+                baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(R, V), parameters.N);
+            }
+            I_L = Vector3.One;
+            if (parameters.LightSources.HasFlag(LightSources.Reflector))
+            {
+                var sourceLocation = parameters.ReflectorPosition.Coordinates;
+                var sourceDistance = Vector3.DistanceSquared(sourceLocation, point);
+                var L = Vector3.Normalize(sourceLocation - point);
+                I_L /= sourceDistance;
+                I_L *= (float)Math.Pow(CosineBetweenVectors(Vector3.Normalize(point - sourceLocation), Vector3.Normalize(parameters.ModifiedReflectorDirection)), parameters.ReflectorMr);
+                var R = 2 * Vector3.Dot(N, L) * N - L;
+                baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(R, V), parameters.N);
+            }
+            //// light color
 
-            var sourceDistance = Vector3.DistanceSquared(sourceLocation, point);
-            I_L /= sourceDistance;
-            var R = 2 * Vector3.Dot(N, L) * N - L;
-            baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(R, V), parameters.N);
+            //// additional versors
+
             //var actualColor2 = I_L * I_O * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(V, R), parameters.N);
             //if (parameters.LightMode == LightMode.Normal)
             //    return (actualColor1 + actualColor2).To255();

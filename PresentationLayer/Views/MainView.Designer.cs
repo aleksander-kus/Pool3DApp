@@ -33,6 +33,9 @@ namespace PresentationLayer.Views
             this.canvasBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.reflectorButton = new System.Windows.Forms.CheckBox();
+            this.mainLightButton = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.cubeRotationBox = new System.Windows.Forms.CheckBox();
             this.cubeMovementBox = new System.Windows.Forms.CheckBox();
@@ -53,15 +56,16 @@ namespace PresentationLayer.Views
             this.kdLabel = new System.Windows.Forms.Label();
             this.fovLabel = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.yTrackbar = new System.Windows.Forms.TrackBar();
+            this.yLabel = new System.Windows.Forms.Label();
             this.hTrackbar = new System.Windows.Forms.TrackBar();
             this.hLabel = new System.Windows.Forms.Label();
             this.ksTrackBar = new System.Windows.Forms.TrackBar();
-            this.yTrackbar = new System.Windows.Forms.TrackBar();
-            this.yLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -70,9 +74,9 @@ namespace PresentationLayer.Views
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kaTrackbar)).BeginInit();
             this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -125,6 +129,7 @@ namespace PresentationLayer.Views
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.groupBox6);
             this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
@@ -135,6 +140,41 @@ namespace PresentationLayer.Views
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(335, 862);
             this.panel1.TabIndex = 0;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.reflectorButton);
+            this.groupBox6.Controls.Add(this.mainLightButton);
+            this.groupBox6.Location = new System.Drawing.Point(174, 461);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(152, 81);
+            this.groupBox6.TabIndex = 10;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Light sources";
+            // 
+            // reflectorButton
+            // 
+            this.reflectorButton.AutoSize = true;
+            this.reflectorButton.Location = new System.Drawing.Point(7, 49);
+            this.reflectorButton.Name = "reflectorButton";
+            this.reflectorButton.Size = new System.Drawing.Size(101, 19);
+            this.reflectorButton.TabIndex = 1;
+            this.reflectorButton.Text = "Cube reflector";
+            this.reflectorButton.UseVisualStyleBackColor = true;
+            this.reflectorButton.CheckedChanged += new System.EventHandler(this.reflectorButton_CheckedChanged);
+            // 
+            // mainLightButton
+            // 
+            this.mainLightButton.AutoSize = true;
+            this.mainLightButton.Checked = true;
+            this.mainLightButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mainLightButton.Location = new System.Drawing.Point(7, 23);
+            this.mainLightButton.Name = "mainLightButton";
+            this.mainLightButton.Size = new System.Drawing.Size(80, 19);
+            this.mainLightButton.TabIndex = 0;
+            this.mainLightButton.Text = "Main light";
+            this.mainLightButton.UseVisualStyleBackColor = true;
+            this.mainLightButton.CheckedChanged += new System.EventHandler(this.mainLightButton_CheckedChanged);
             // 
             // groupBox4
             // 
@@ -368,6 +408,29 @@ namespace PresentationLayer.Views
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Main light position";
             // 
+            // yTrackbar
+            // 
+            this.yTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.yTrackbar.Location = new System.Drawing.Point(8, 61);
+            this.yTrackbar.Maximum = 25;
+            this.yTrackbar.Minimum = -5;
+            this.yTrackbar.Name = "yTrackbar";
+            this.yTrackbar.Size = new System.Drawing.Size(274, 45);
+            this.yTrackbar.TabIndex = 15;
+            this.yTrackbar.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.yTrackbar.Value = 10;
+            this.yTrackbar.ValueChanged += new System.EventHandler(this.yTrackbar_ValueChanged);
+            // 
+            // yLabel
+            // 
+            this.yLabel.AutoSize = true;
+            this.yLabel.Location = new System.Drawing.Point(280, 62);
+            this.yLabel.Name = "yLabel";
+            this.yLabel.Size = new System.Drawing.Size(16, 15);
+            this.yLabel.TabIndex = 16;
+            this.yLabel.Text = "y:";
+            // 
             // hTrackbar
             // 
             this.hTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -403,29 +466,6 @@ namespace PresentationLayer.Views
             this.ksTrackBar.Value = 50;
             this.ksTrackBar.ValueChanged += new System.EventHandler(this.ksTrackBar_ValueChanged);
             // 
-            // yTrackbar
-            // 
-            this.yTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.yTrackbar.Location = new System.Drawing.Point(8, 61);
-            this.yTrackbar.Maximum = 25;
-            this.yTrackbar.Minimum = -5;
-            this.yTrackbar.Name = "yTrackbar";
-            this.yTrackbar.Size = new System.Drawing.Size(274, 45);
-            this.yTrackbar.TabIndex = 15;
-            this.yTrackbar.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.yTrackbar.Value = 10;
-            this.yTrackbar.ValueChanged += new System.EventHandler(this.yTrackbar_ValueChanged);
-            // 
-            // yLabel
-            // 
-            this.yLabel.AutoSize = true;
-            this.yLabel.Location = new System.Drawing.Point(280, 62);
-            this.yLabel.Name = "yLabel";
-            this.yLabel.Size = new System.Drawing.Size(16, 15);
-            this.yLabel.TabIndex = 16;
-            this.yLabel.Text = "y:";
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -433,7 +473,7 @@ namespace PresentationLayer.Views
             this.ClientSize = new System.Drawing.Size(1154, 874);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "MainView";
-            this.Text = "MainView";
+            this.Text = "Pool";
             this.Load += new System.EventHandler(this.MainView_Load);
             this.Resize += new System.EventHandler(this.MainView_Resize);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -441,6 +481,8 @@ namespace PresentationLayer.Views
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -454,9 +496,9 @@ namespace PresentationLayer.Views
             ((System.ComponentModel.ISupportInitialize)(this.kaTrackbar)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -492,5 +534,8 @@ namespace PresentationLayer.Views
         private System.Windows.Forms.Label hLabel;
         private System.Windows.Forms.TrackBar yTrackbar;
         private System.Windows.Forms.Label yLabel;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.CheckBox reflectorButton;
+        private System.Windows.Forms.CheckBox mainLightButton;
     }
 }
