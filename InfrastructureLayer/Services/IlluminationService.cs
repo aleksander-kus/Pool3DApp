@@ -43,6 +43,12 @@ namespace InfrastructureLayer.Services
                 var R = 2 * Vector3.Dot(N, L) * N - L;
                 baseColor += I_L * parameters.Kd * CosineBetweenVectors(N, L) + I_L * parameters.Ks * (float)Math.Pow(CosineBetweenVectors(R, V), parameters.N);
             }
+            if(parameters.Fog)
+            {
+                float factor = Vector3.Distance(camera.Position.Coordinates, point) * parameters.FogDensity;
+                float alpha = (float)(1 / Math.Exp(factor * factor * factor));
+                baseColor = (1 - alpha) * Vector3.One + alpha * baseColor;
+            }
             return baseColor.To255();
         }
 

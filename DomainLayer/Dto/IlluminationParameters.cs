@@ -18,5 +18,7 @@ namespace DomainLayer.Dto
         public Vector3 ModifiedReflectorDirection { get; set; } = new Vector3(-1, 0, 0);
         public int ReflectorMr { get; set; } = 10;
         public LightSources LightSources { get; set; } = LightSources.Main;
+        public bool Fog { get; set; } = false;
+        public float FogDensity { get; set; } = 0.15f;
     }
 }

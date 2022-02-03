@@ -63,6 +63,8 @@ namespace PresentationLayer.Views
             this.hTrackbar = new System.Windows.Forms.TrackBar();
             this.hLabel = new System.Windows.Forms.Label();
             this.ksTrackBar = new System.Windows.Forms.TrackBar();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.fogBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -80,6 +82,7 @@ namespace PresentationLayer.Views
             ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -132,6 +135,7 @@ namespace PresentationLayer.Views
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.groupBox7);
             this.panel1.Controls.Add(this.groupBox6);
             this.panel1.Controls.Add(this.groupBox4);
             this.panel1.Controls.Add(this.groupBox3);
@@ -494,6 +498,27 @@ namespace PresentationLayer.Views
             this.ksTrackBar.Value = 50;
             this.ksTrackBar.ValueChanged += new System.EventHandler(this.ksTrackBar_ValueChanged);
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.fogBox);
+            this.groupBox7.Location = new System.Drawing.Point(3, 589);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(111, 51);
+            this.groupBox7.TabIndex = 11;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Fog";
+            // 
+            // fogBox
+            // 
+            this.fogBox.AutoSize = true;
+            this.fogBox.Location = new System.Drawing.Point(6, 23);
+            this.fogBox.Name = "fogBox";
+            this.fogBox.Size = new System.Drawing.Size(61, 19);
+            this.fogBox.TabIndex = 0;
+            this.fogBox.Text = "Enable";
+            this.fogBox.UseVisualStyleBackColor = true;
+            this.fogBox.CheckedChanged += new System.EventHandler(this.fogBox_CheckedChanged);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -528,6 +553,8 @@ namespace PresentationLayer.Views
             ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -568,5 +595,7 @@ namespace PresentationLayer.Views
         private System.Windows.Forms.CheckBox mainLightButton;
         private System.Windows.Forms.TrackBar xTrackbar;
         private System.Windows.Forms.Label xLabel;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.CheckBox fogBox;
     }
 }

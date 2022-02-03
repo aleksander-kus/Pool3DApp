@@ -111,6 +111,15 @@ namespace PresentationLayer.Presenters
             }
         }
 
+        public bool Fog
+        {
+            set
+            {
+                illuminationParameters.Fog = value;
+                Update();
+            }
+        }
+
         public ShadingMode ShadingMode
         {
             set

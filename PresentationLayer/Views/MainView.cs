@@ -136,5 +136,9 @@ namespace PresentationLayer.Views
             presenter.Reflector = reflectorButton.Checked;
         }
 
+        private void fogBox_CheckedChanged(object sender, System.EventArgs e)
+        {
+            presenter.Fog = fogBox.Checked;
+        }
     }
 }
