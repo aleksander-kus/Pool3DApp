@@ -1,0 +1,19 @@
+Program pokazuje prostą scenę ze stołem bilardowym, trzema kulami i poruszającą się kostką. 
+Sterowanie odbywa się za pomocą myszki i menu umieszczonego z prawej strony.
+Możliwa jest zmiana następujących parametrów:
+- Fov,
+- współczynniki ambient, diffuse i specular występujące w modelu oświetlenia Phonga,
+- położenie głównego, nieruchomego źródła światła (oś Z - góra - dół, oś Y wzdłuż dłuższego boku stołu).
+Możliwa jest zmiana kamery:
+- statyczna,
+- statyczna śledząca poruszającą się kostkę,
+- kamera patrząca na kostkę z góry i poruszająca się razem z nią.
+Możliwa jest zmiana modelu cieniowania:
+- cieniowanie stałe,
+- cieniowanie Gourauda,
+- cieniowanie Phonga.
+Możliwe jest wyłączenie i włączenie dwóch źródeł światła:
+- główne, nieruchome światło nad stołem,
+- reflektor umieszczony na kostce, poruszający i obracający się razem z nią.
+Możliwe jest włączanie i rotacja kostki.
+Możliwe jest włączenie i wyłączenie efektu mgły.
