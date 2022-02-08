@@ -33,6 +33,8 @@ namespace PresentationLayer.Views
             this.canvasBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.fogBox = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.reflectorButton = new System.Windows.Forms.CheckBox();
             this.mainLightButton = new System.Windows.Forms.CheckBox();
@@ -63,12 +65,11 @@ namespace PresentationLayer.Views
             this.hTrackbar = new System.Windows.Forms.TrackBar();
             this.hLabel = new System.Windows.Forms.Label();
             this.ksTrackBar = new System.Windows.Forms.TrackBar();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.fogBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvasBox)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -82,7 +83,6 @@ namespace PresentationLayer.Views
             ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
-            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -147,6 +147,27 @@ namespace PresentationLayer.Views
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(335, 862);
             this.panel1.TabIndex = 0;
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.fogBox);
+            this.groupBox7.Location = new System.Drawing.Point(3, 589);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(111, 51);
+            this.groupBox7.TabIndex = 11;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Fog";
+            // 
+            // fogBox
+            // 
+            this.fogBox.AutoSize = true;
+            this.fogBox.Location = new System.Drawing.Point(6, 23);
+            this.fogBox.Name = "fogBox";
+            this.fogBox.Size = new System.Drawing.Size(61, 19);
+            this.fogBox.TabIndex = 0;
+            this.fogBox.Text = "Enable";
+            this.fogBox.UseVisualStyleBackColor = true;
+            this.fogBox.CheckedChanged += new System.EventHandler(this.fogBox_CheckedChanged);
             // 
             // groupBox6
             // 
@@ -498,27 +519,6 @@ namespace PresentationLayer.Views
             this.ksTrackBar.Value = 50;
             this.ksTrackBar.ValueChanged += new System.EventHandler(this.ksTrackBar_ValueChanged);
             // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.fogBox);
-            this.groupBox7.Location = new System.Drawing.Point(3, 589);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(111, 51);
-            this.groupBox7.TabIndex = 11;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Fog";
-            // 
-            // fogBox
-            // 
-            this.fogBox.AutoSize = true;
-            this.fogBox.Location = new System.Drawing.Point(6, 23);
-            this.fogBox.Name = "fogBox";
-            this.fogBox.Size = new System.Drawing.Size(61, 19);
-            this.fogBox.TabIndex = 0;
-            this.fogBox.Text = "Enable";
-            this.fogBox.UseVisualStyleBackColor = true;
-            this.fogBox.CheckedChanged += new System.EventHandler(this.fogBox_CheckedChanged);
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -526,6 +526,7 @@ namespace PresentationLayer.Views
             this.ClientSize = new System.Drawing.Size(1154, 874);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "MainView";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Pool";
             this.Load += new System.EventHandler(this.MainView_Load);
             this.Resize += new System.EventHandler(this.MainView_Resize);
@@ -534,6 +535,8 @@ namespace PresentationLayer.Views
             this.tableLayoutPanel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -553,8 +556,6 @@ namespace PresentationLayer.Views
             ((System.ComponentModel.ISupportInitialize)(this.yTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
 
         }

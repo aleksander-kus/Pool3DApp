@@ -38,6 +38,9 @@ namespace PresentationLayer.Views
             hTrackbar_ValueChanged(null, null);
             yTrackbar_ValueChanged(null, null);
             xTrackbar_ValueChanged(null, null);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
             timer.Start();
         }
 
